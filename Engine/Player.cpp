@@ -14,21 +14,7 @@ Player::~Player()
 
 void Player::routine(float deltaTime)
 {
-	int frictionFactor = 5;
-
-	if (isGrounded)
-		frictionFactor = 20;
-
-    //Gravity
-	yVelocity += 1000 * deltaTime;
-
-    //Friction
-	if (xVelocity > frictionFactor)
-		xVelocity -= frictionFactor;
-	else if (xVelocity < -frictionFactor)
-		xVelocity += frictionFactor;
-	else
-		xVelocity = 0;
+	applyGravityAndFriction(deltaTime);
 }
 
 void Player::run(int xRun)
@@ -37,18 +23,18 @@ void Player::run(int xRun)
 
     if(isGrounded)
     {
-        xVelocity += xRun;
-        if (xVelocity < -runMax)
-			xVelocity = -runMax;
-        if (xVelocity > runMax)
-			xVelocity = runMax;
+		velocityVector.x += xRun;
+        if (velocityVector.x < -runMax)
+			velocityVector.x = -runMax;
+        if (velocityVector.x > runMax)
+			velocityVector.x = runMax;
     }
 }
 
 void Player::jump(int yJump)
 {
     if(isGrounded)
-        yVelocity += yJump;
+		velocityVector.y += yJump;
 
     isGrounded = false;
 }

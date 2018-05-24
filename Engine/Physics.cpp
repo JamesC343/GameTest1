@@ -13,7 +13,7 @@ Physics::~Physics()
 
 void Physics::routine(float deltaTime)
 {
-	moveEntities(deltaTime);
+	moveEntitiesLegacy(deltaTime);
 }
 
 void Physics::addTerrainMap(int* newMap, Vei2 mapSize)
@@ -22,50 +22,43 @@ void Physics::addTerrainMap(int* newMap, Vei2 mapSize)
 	worldSize = mapSize;
 }
 
-void Physics::moveEntities(float deltaTime)
+void Physics::moveEntitiesLegacy(float deltaTime)
 {
 	for(int j = 0; j < entities->size(); j++)
 	{
 		Entity* entity = entities->at(j);
 		RectI hitBox = entity->getHitBox();
 
-		int xVelocity = entity->getXVelocity();
-		int yVelocity = entity->getYVelocity();
+		Vector velocityVector = entity->getVelocityVector();
 
-		int xMove = xVelocity * deltaTime;
-		int yMove = yVelocity * deltaTime;
+		int xMove = velocityVector.x * deltaTime;
+		int yMove = velocityVector.y * deltaTime;
 
 		if(xMove < 0)
 		    for (int i = 0; i > xMove; i--)
-		        if (!isCollision(entity->getHitBox(), Vei2(-1,0)))
+		        if (!isCollisionLegacy(entity->getHitBox(), Vei2(-1,0)))
 					entity->move({ -1, 0 });
-//		        else
-//		            player->resetXForce();
 
 		if(xMove > 0)
 		    for (int i = 0; i < xMove; i++)
-		        if (!isCollision(entity->getHitBox(), Vei2(1,0)))
+		        if (!isCollisionLegacy(entity->getHitBox(), Vei2(1,0)))
 					entity->move({ 1,0 });
-//		          else
-//		              player->resetXForce();
 
 		if(yMove < 0)
 		    for (int i = 0; i > yMove; i--)
-		        if (!isCollision(entity->getHitBox(), Vei2(0,-1)))
+		        if (!isCollisionLegacy(entity->getHitBox(), Vei2(0,-1)))
 					entity->move({ 0,-1 });
-//		        else
-//		            entity->resetYVelocity();
 
 		if(yMove > 0)
 		    for (int i = 0; i < yMove; i++)
-		        if (!isCollision(entity->getHitBox(), Vei2(0,1)))
+		        if (!isCollisionLegacy(entity->getHitBox(), Vei2(0,1)))
 					entity->move({ 0,1 });
 		        else
-		            entity->resetYVelocity();
+		            entity->setGrounded();
 	}
 }
 
-bool Physics::isCollision(RectI hitBox, Vei2 move)
+bool Physics::isCollisionLegacy(RectI hitBox, Vei2 move)
 {
     int tileXMin, tileXMax, tileYMin, tileYMax;
 

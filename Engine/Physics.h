@@ -15,8 +15,8 @@ class Physics
     protected:
 
     private:
-		void moveEntities(float);
-		bool isCollision(RectI,Vei2);
+		void moveEntitiesLegacy(float);
+		bool isCollisionLegacy(RectI,Vei2);
 
 		Player* target;
 		std::vector<Entity*>* entities;

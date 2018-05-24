@@ -6,14 +6,32 @@ Entity::Entity(std::string spritePath, RectI rect, Vei2 size, Vei2 position)
 {
 	sprite = new Sprite(spritePath, rect);
 
-	xVelocity = 0;
-	yVelocity = 0;
-	isGrounded = false;
+	velocityVector = { 0,0 };
+	setGrounded();
 }
 
 Entity::~Entity()
 {
 	delete sprite;
+}
+
+void Entity::applyGravityAndFriction(float deltaTime)
+{
+	int frictionFactor = 100 * deltaTime;
+
+	if (isGrounded)
+		frictionFactor = 750 * deltaTime;
+
+	//Gravity
+	velocityVector.y += 1000 * deltaTime;
+
+	//Friction
+	if (velocityVector.x > frictionFactor)
+		velocityVector.x -= frictionFactor;
+	else if (velocityVector.x < -frictionFactor)
+		velocityVector.x += frictionFactor;
+	else
+		velocityVector.x = 0;
 }
 
 Sprite Entity::getSprite()
@@ -31,29 +49,13 @@ RectI Entity::getHitBox()
 	return hitBox;
 }
 
-int Entity::getXVelocity()
+Vector Entity::getVelocityVector()
 {
-	return xVelocity;
+	return velocityVector;
 }
 
-int Entity::getYVelocity()
+void Entity::setGrounded()
 {
-	return yVelocity;
-}
-
-void Entity::resetXVelocity()
-{
-	xVelocity = 0;
-}
-
-void Entity::resetYVelocity()
-{
-	yVelocity = 0;
+	velocityVector.y = 0;
 	isGrounded = true;
-}
-
-void Entity::entity()
-{
-    xVelocity = 0;
-	yVelocity = 0;
 }
