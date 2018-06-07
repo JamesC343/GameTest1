@@ -17,13 +17,13 @@ Entity::~Entity()
 
 void Entity::applyGravityAndFriction(float deltaTime)
 {
-	int frictionFactor = 100 * deltaTime;
+	int frictionFactor = 100 * (20) * deltaTime;
 
 	if (isGrounded)
-		frictionFactor = 750 * deltaTime;
+		frictionFactor = 750 * (20) * deltaTime;
 
 	//Gravity
-	velocityVector.y += 1000 * deltaTime;
+	velocityVector.y += 1000 * (20) * deltaTime;
 
 	//Friction
 	if (velocityVector.x > frictionFactor)

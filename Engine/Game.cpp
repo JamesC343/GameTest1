@@ -29,10 +29,10 @@ Game::Game( MainWindow& wnd ) :	wnd( wnd )
 {
 	gfx = new Graphics(wnd);
 	
-	player = new Player("images/player.bmp", { 0,55,0,60 }, { 55, 60 }, { 0, 0 });
+	player = new Player("images/player.bmp", { 0,55,0,60 }, { 55 * (20), 60 * (20) }, { 0 * (20), 0 * (20) });
 
 	entities.push_back(player);
-	entities.push_back(new EntityY("images/yorp.bmp", { 0,29,0,42 }, { 29, 42 }, { 400, 200 }));
+	entities.push_back(new EntityY("images/yorp.bmp", { 0,29,0,42 }, { 29 * (20), 42 * (20) }, { 400 * (20), 200 * (20) }));
 
 	loadTerrainMap();
 	
@@ -60,15 +60,15 @@ void Game::UpdateModel()
 
 	if( wnd.kbd.KeyIsPressed( 'A' ) )
 	{
-		player->run(-100);
+		player->run(-100 * (20));
 	}
 	if( wnd.kbd.KeyIsPressed( 'D' ) )
 	{
-		player->run(100);
+		player->run(100 * (20));
 	}
 	if( wnd.kbd.KeyIsPressed( VK_SPACE ) )
 	{
-		player->jump(-500);
+		player->jump(-500 * (20));
 	}
 	
 	for (int i = 0; i < entities.size(); i++)

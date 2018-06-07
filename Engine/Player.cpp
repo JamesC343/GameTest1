@@ -19,7 +19,7 @@ void Player::routine(float deltaTime)
 
 void Player::run(int xRun)
 {
-    int runMax = 300;
+    int runMax = 300 * (20);
 
     if(isGrounded)
     {

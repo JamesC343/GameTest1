@@ -38,7 +38,14 @@ void Camera::drawSprites()
 void Camera::drawEntities()
 {
 	for (int i = 0; i < entities->size(); i++)
-		gfx->DrawSprite(entities->at(i)->getHitBox().left - getTopLeft().x, entities->at(i)->getHitBox().top - getTopLeft().y, entities->at(i)->getSprite(), gfx->GetScreenRect());
+	{
+		Entity* entity = entities->at(i);
+		gfx->DrawSprite(
+			entity->getHitBox().left / (20) - getTopLeft().x
+			, entity->getHitBox().top / (20) - getTopLeft().y
+			, entity->getSprite()
+			, gfx->GetScreenRect());
+	}
 }
 
 void Camera::drawTerrain()
@@ -62,7 +69,7 @@ void Camera::move(float deltaTime)
 
 	Vei2 cursorPosition(wnd->mouse.GetPosX() - cameraSize.x / 2, wnd->mouse.GetPosY() - cameraSize.y / 2);
 	
-	Vei2 targetPosition = target->getHitBox().GetCenter() + cursorPosition;
+	Vei2 targetPosition = target->getHitBox().GetCenter() / (20) + cursorPosition;
 
 	setPosition((cameraPos * 3 + targetPosition) / 4);//Camera Smoothing
 }

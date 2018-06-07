@@ -62,10 +62,10 @@ bool Physics::isCollisionLegacy(RectI hitBox, Vei2 move)
 {
     int tileXMin, tileXMax, tileYMin, tileYMax;
 
-	int xMin = hitBox.left + move.x;
-    int xMax = hitBox.right + move.x;
-	int yMin = hitBox.top + move.y;
-    int yMax = hitBox.bottom + move.y;
+	int xMin = hitBox.left / (20) + move.x;
+    int xMax = hitBox.right / (20) + move.x;
+	int yMin = hitBox.top / (20) + move.y;
+    int yMax = hitBox.bottom / (20) + move.y;
 
     for (int i = 0; i < worldSize.x*worldSize.y; i++)
     {
