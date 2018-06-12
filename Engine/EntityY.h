@@ -1,10 +1,10 @@
 #ifndef ENTITYY_H
 #define ENTITYY_H
-#include "Entity.h"
+#include "PhysicalObject.h"
 #include "Surface.h"
 
 
-class EntityY : public Entity
+class EntityY : public PhysicalObject
 {
     public:
         EntityY(std::string,RectI,Vei2, Vei2);

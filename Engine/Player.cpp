@@ -2,7 +2,7 @@
 #include "Player.h"
 
 Player::Player(std::string spritePath, RectI rect, Vei2 size, Vei2 position)
-	: Entity(spritePath, rect, size, position)
+	: PhysicalObject(spritePath, rect, size, position)
 {
     //ctor
 }

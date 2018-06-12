@@ -1,10 +1,10 @@
 #ifndef PLAYER_H
 #define PLAYER_H
-#include "Entity.h"
+#include "PhysicalObject.h"
 #include "Surface.h"
 
 
-class Player : public Entity
+class Player : public PhysicalObject
 {
     public:
         Player(std::string,RectI,Vei2,Vei2);

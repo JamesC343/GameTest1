@@ -9,7 +9,7 @@
 class Camera// : public Entity
 {
     public:
-        Camera(MainWindow*,Graphics*,Player*,std::vector<Entity*>*,RectI);
+        Camera(MainWindow*,Graphics*,Player*,std::vector<PhysicalObject*>*,RectI);
         virtual ~Camera();
         void routine(float);
         void drawSprites();
@@ -29,7 +29,7 @@ class Camera// : public Entity
 		Graphics* gfx;
 		Player* target;
 
-		std::vector<Entity*>* entities;
+		std::vector<PhysicalObject*>* entities;
 		
 		Surface* backgroundSprite;
 		Surface* terrainSprite;

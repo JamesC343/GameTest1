@@ -6,11 +6,11 @@
 #include "Vector.h"
 
 
-class Entity
+class PhysicalObject
 {
     public:
-        Entity(std::string,RectI,Vei2,Vei2);
-        virtual ~Entity();
+		PhysicalObject(std::string,RectI,Vei2,Vei2);
+        virtual ~PhysicalObject();
 		
         virtual void routine(float) = 0;
 

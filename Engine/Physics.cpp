@@ -1,6 +1,6 @@
 #include "Physics.h"
 
-Physics::Physics(Player* target, std::vector<Entity*>* entities)
+Physics::Physics(Player* target, std::vector<PhysicalObject*>* entities)
 	: target (target), entities (entities)
 {
     //ctor
@@ -26,7 +26,7 @@ void Physics::moveEntitiesLegacy(float deltaTime)
 {
 	for(int j = 0; j < entities->size(); j++)
 	{
-		Entity* entity = entities->at(j);
+		PhysicalObject* entity = entities->at(j);
 		RectI hitBox = entity->getHitBox();
 
 		Vector velocityVector = entity->getVelocityVector();

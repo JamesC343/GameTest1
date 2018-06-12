@@ -1,7 +1,7 @@
 #include "Camera.h"
 #include "MainWindow.h"
 
-Camera::Camera(MainWindow* wnd, Graphics* gfx, Player* target, std::vector<Entity*>* entities, RectI boundary)
+Camera::Camera(MainWindow* wnd, Graphics* gfx, Player* target, std::vector<PhysicalObject*>* entities, RectI boundary)
 	: wnd (wnd), gfx (gfx), boundary (boundary), target (target), entities (entities), cameraSize(640, 480), cameraPos(0,0)
 {
 	this->boundary.left += cameraSize.x / 2;
@@ -39,7 +39,7 @@ void Camera::drawEntities()
 {
 	for (int i = 0; i < entities->size(); i++)
 	{
-		Entity* entity = entities->at(i);
+		PhysicalObject* entity = entities->at(i);
 		gfx->DrawSprite(
 			entity->getHitBox().left / (20) - getTopLeft().x
 			, entity->getHitBox().top / (20) - getTopLeft().y

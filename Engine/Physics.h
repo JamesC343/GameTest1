@@ -7,7 +7,7 @@
 class Physics
 {
     public:
-        Physics(Player*,std::vector<Entity*>*);
+        Physics(Player*,std::vector<PhysicalObject*>*);
         virtual ~Physics();
 		void routine(float);
 		void addTerrainMap(int*,Vei2);
@@ -19,7 +19,7 @@ class Physics
 		bool isCollisionLegacy(RectI,Vei2);
 
 		Player* target;
-		std::vector<Entity*>* entities;
+		std::vector<PhysicalObject*>* entities;
 
 		int* terrainMap;
 		Vei2 worldSize;

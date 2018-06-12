@@ -3,7 +3,7 @@
 #include "time.h"
 
 EntityY::EntityY(std::string spritePath, RectI rect, Vei2 size, Vei2 position)
-	: Entity(spritePath, rect, size, position)
+	: PhysicalObject(spritePath, rect, size, position)
 {
     //ctor
 	srand (time(NULL));

@@ -1,7 +1,7 @@
-#include "Entity.h"
+#include "PhysicalObject.h"
 
 
-Entity::Entity(std::string spritePath, RectI rect, Vei2 size, Vei2 position)
+PhysicalObject::PhysicalObject(std::string spritePath, RectI rect, Vei2 size, Vei2 position)
 		: hitBox (position, size.x - 1, size.y - 1)
 {
 	sprite = new Sprite(spritePath, rect);
@@ -10,12 +10,12 @@ Entity::Entity(std::string spritePath, RectI rect, Vei2 size, Vei2 position)
 	setGrounded();
 }
 
-Entity::~Entity()
+PhysicalObject::~PhysicalObject()
 {
 	delete sprite;
 }
 
-void Entity::applyGravityAndFriction(float deltaTime)
+void PhysicalObject::applyGravityAndFriction(float deltaTime)
 {
 	int frictionFactor = 100 * (20) * deltaTime;
 
@@ -34,27 +34,27 @@ void Entity::applyGravityAndFriction(float deltaTime)
 		velocityVector.x = 0;
 }
 
-Sprite Entity::getSprite()
+Sprite PhysicalObject::getSprite()
 {
 	return *sprite;
 }
 
-void Entity::move(Vei2 move)
+void PhysicalObject::move(Vei2 move)
 {
     hitBox.move(move);
 }
 
-RectI Entity::getHitBox()
+RectI PhysicalObject::getHitBox()
 {
 	return hitBox;
 }
 
-Vector Entity::getVelocityVector()
+Vector PhysicalObject::getVelocityVector()
 {
 	return velocityVector;
 }
 
-void Entity::setGrounded()
+void PhysicalObject::setGrounded()
 {
 	velocityVector.y = 0;
 	isGrounded = true;
