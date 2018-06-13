@@ -20,8 +20,8 @@
  ******************************************************************************************/
 #include "MainWindow.h"
 #include "Game.h"
-#include "player.h"
-#include "entityY.h"
+#include "Player.h"
+#include "EntityY.h"
 #include "String.h"
 #include "Camera.h"
 
@@ -29,18 +29,22 @@ Game::Game( MainWindow& wnd ) :	wnd( wnd )
 {
 	gfx = new Graphics(wnd);
 	
-	player = new Player("images/player.bmp", { 0,55,0,60 }, { 55 * (20), 60 * (20) }, { 0 * (20), 0 * (20) });
-
+	Sprite* playerSprite = new Sprite("images/player.bmp", { 0,55,0,60 });
+	player = new Player(playerSprite, { 55 * (20), 60 * (20) }, { 0 * (20), 0 * (20) });
 	entities.push_back(player);
-	entities.push_back(new EntityY("images/yorp.bmp", { 0,29,0,42 }, { 29 * (20), 42 * (20) }, { 400 * (20), 200 * (20) }));
+
+	Sprite* yorpSprite = new Sprite("images/yorp.bmp", { 0,29,0,42 });
+	entities.push_back(new EntityY(yorpSprite, { 29 * (20), 42 * (20) }, { 400 * (20), 200 * (20) }));
 
 	loadTerrainMap();
+
+	loadDerivedSets();
 	
 	//camera = new Camera(&wnd, gfx, player, &entities, { 0 + 320, worldSize.x * 40 - 320, 0 + 240, worldSize.y * 32 - 240 } );
-	camera = new Camera(&wnd, gfx, player, &entities, { 0, worldSize.x * 40, 0, worldSize.y * 32 } );
+	camera = new Camera(&wnd, gfx, player, &visualObjects, { 0, worldSize.x * 40, 0, worldSize.y * 32 } );
 	camera->addTerrainMap(terrainMap, worldSize);
 
-	physics = new Physics(player, &entities);
+	physics = new Physics(player, &physicalObjects);
 	physics->addTerrainMap(terrainMap, worldSize);
 
 	ft.Mark();
@@ -68,7 +72,7 @@ void Game::UpdateModel()
 	}
 	if( wnd.kbd.KeyIsPressed( VK_SPACE ) )
 	{
-		player->jump(-500 * (20));
+		player->jump(-750 * (20));
 	}
 	
 	for (int i = 0; i < entities.size(); i++)
@@ -111,7 +115,40 @@ void Game::loadTerrainMap()
 		"BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB"
 		"BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB";
 
-	auto mi = map.cbegin();
-	for (int i = 0; i < worldSize.x*worldSize.y; i++, ++mi)
-			terrainMap[i] = (*mi == 'B') ? 1 : 0;
+	auto mapIterator = map.cbegin();
+	for (int i = 0; i < worldSize.x*worldSize.y; i++, ++mapIterator)
+		terrainMap[i] = (*mapIterator == 'B') ? 1 : 0;
+
+	Sprite* thisIsAMemoryLeak = new Sprite("images/terrain2.bmp", { 0,40,0,32 });
+
+	auto mapIterator2 = map.cbegin();
+	for (int i = 0; i < worldSize.x*worldSize.y; i++, ++mapIterator2)
+		if(*mapIterator2 == 'B')
+			terrainObjects.push_back(new TerrainObject(thisIsAMemoryLeak, Vei2{ 40, 32 }, Vei2{ i%worldSize.x * 40 * (20), i / worldSize.x * 32 * (20) }));
+}
+
+void Game::loadDerivedSets()
+{
+	PhysicalObject* loadObject;
+
+	for (int i = 0; i < entities.size(); i++)
+	{
+		loadObject = dynamic_cast<PhysicalObject*> (entities.at(i));
+
+		if (loadObject != NULL)
+		{
+			physicalObjects.push_back(loadObject);
+			visualObjects.push_back(loadObject);
+		}
+	}
+
+	loadObject = nullptr;
+
+	for (int i = 0; i < terrainObjects.size(); i++)
+	{
+		loadObject = dynamic_cast<PhysicalObject*> (terrainObjects.at(i));
+
+		if (loadObject != NULL)
+			physicalObjects.push_back(loadObject);
+	}
 }

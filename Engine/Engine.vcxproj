@@ -141,6 +141,7 @@
     <ClInclude Include="ChiliWin.h" />
     <ClInclude Include="Colors.h" />
     <ClInclude Include="DXErr.h" />
+    <ClInclude Include="Entity.h" />
     <ClInclude Include="EntityY.h" />
     <ClInclude Include="FrameTimer.h" />
     <ClInclude Include="Game.h" />
@@ -156,12 +157,14 @@
     <ClInclude Include="Mouse.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="Terrain.h" />
+    <ClInclude Include="TerrainObject.h" />
     <ClInclude Include="Vector.h" />
     <ClInclude Include="Vei2.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="DXErr.cpp" />
+    <ClCompile Include="Entity.cpp" />
     <ClCompile Include="EntityY.cpp" />
     <ClCompile Include="FrameTimer.cpp" />
     <ClCompile Include="Game.cpp" />
@@ -177,6 +180,7 @@
     <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="Surface.cpp" />
     <ClCompile Include="Terrain.cpp" />
+    <ClCompile Include="TerrainObject.cpp" />
     <ClCompile Include="Vector.cpp" />
     <ClCompile Include="Vei2.cpp" />
   </ItemGroup>

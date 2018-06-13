@@ -1,11 +1,9 @@
 #include "PhysicalObject.h"
 
 
-PhysicalObject::PhysicalObject(std::string spritePath, RectI rect, Vei2 size, Vei2 position)
-		: hitBox (position, size.x - 1, size.y - 1)
+PhysicalObject::PhysicalObject(Sprite* sprite, Vei2 size, Vei2 position, const bool isMovable)
+		: sprite(sprite), hitBox (position, size.x - 1, size.y - 1), objectIsMovable(isMovable)
 {
-	sprite = new Sprite(spritePath, rect);
-
 	velocityVector = { 0,0 };
 	setGrounded();
 }
@@ -23,7 +21,7 @@ void PhysicalObject::applyGravityAndFriction(float deltaTime)
 		frictionFactor = 750 * (20) * deltaTime;
 
 	//Gravity
-	velocityVector.y += 1000 * (20) * deltaTime;
+	velocityVector.y += 2500 * (20) * deltaTime;
 
 	//Friction
 	if (velocityVector.x > frictionFactor)
@@ -34,14 +32,20 @@ void PhysicalObject::applyGravityAndFriction(float deltaTime)
 		velocityVector.x = 0;
 }
 
-Sprite PhysicalObject::getSprite()
-{
-	return *sprite;
-}
-
 void PhysicalObject::move(Vei2 move)
 {
     hitBox.move(move);
+}
+
+void PhysicalObject::setGrounded()
+{
+	velocityVector.y = 0;
+	isGrounded = true;
+}
+
+Sprite PhysicalObject::getSprite()
+{
+	return *sprite;
 }
 
 RectI PhysicalObject::getHitBox()
@@ -49,13 +53,17 @@ RectI PhysicalObject::getHitBox()
 	return hitBox;
 }
 
+RectI PhysicalObject::getSpriteBox()
+{
+	return spriteBox;
+}
+
 Vector PhysicalObject::getVelocityVector()
 {
 	return velocityVector;
 }
 
-void PhysicalObject::setGrounded()
+const bool PhysicalObject::isMovable()
 {
-	velocityVector.y = 0;
-	isGrounded = true;
+	return objectIsMovable;
 }

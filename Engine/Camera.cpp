@@ -1,8 +1,8 @@
 #include "Camera.h"
 #include "MainWindow.h"
 
-Camera::Camera(MainWindow* wnd, Graphics* gfx, Player* target, std::vector<PhysicalObject*>* entities, RectI boundary)
-	: wnd (wnd), gfx (gfx), boundary (boundary), target (target), entities (entities), cameraSize(640, 480), cameraPos(0,0)
+Camera::Camera(MainWindow* wnd, Graphics* gfx, Player* target, std::vector<PhysicalObject*>* visualObjects, RectI boundary)
+	: wnd (wnd), gfx (gfx), boundary (boundary), target (target), visualObjects(visualObjects), cameraSize(640, 480), cameraPos(0,0)
 {
 	this->boundary.left += cameraSize.x / 2;
 	this->boundary.right -= cameraSize.x / 2;
@@ -37,13 +37,13 @@ void Camera::drawSprites()
 
 void Camera::drawEntities()
 {
-	for (int i = 0; i < entities->size(); i++)
+	for (int i = 0; i < visualObjects->size(); i++)
 	{
-		PhysicalObject* entity = entities->at(i);
+		PhysicalObject* visualObject = visualObjects->at(i);
 		gfx->DrawSprite(
-			entity->getHitBox().left / (20) - getTopLeft().x
-			, entity->getHitBox().top / (20) - getTopLeft().y
-			, entity->getSprite()
+			visualObject->getHitBox().left / (20) - getTopLeft().x
+			, visualObject->getHitBox().top / (20) - getTopLeft().y
+			, visualObject->getSprite()
 			, gfx->GetScreenRect());
 	}
 }

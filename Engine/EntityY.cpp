@@ -2,8 +2,9 @@
 #include "EntityY.h"
 #include "time.h"
 
-EntityY::EntityY(std::string spritePath, RectI rect, Vei2 size, Vei2 position)
-	: PhysicalObject(spritePath, rect, size, position)
+EntityY::EntityY(Sprite* sprite, Vei2 size, Vei2 position)
+	: PhysicalObject(sprite, size, position, true)
+	, Entity()
 {
     //ctor
 	srand (time(NULL));

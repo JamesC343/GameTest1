@@ -27,6 +27,7 @@
 #include "Surface.h"
 #include "Player.h"
 #include "EntityY.h"
+#include "TerrainObject.h"
 #include "Physics.h"
 #include "Camera.h"
 #include "FrameTimer.h"
@@ -43,6 +44,7 @@ class Game
 		void ComposeFrame();
 		void UpdateModel();
 		void loadTerrainMap();
+		void loadDerivedSets();
 	
 	private:
 		MainWindow& wnd;
@@ -53,7 +55,13 @@ class Game
 		Camera* camera;
 		Player* player;
 		
-		std::vector<PhysicalObject*> entities;
+		//Prime Sets
+		std::vector<Entity*> entities;
+		std::vector<TerrainObject*> terrainObjects;
+
+		//Derived Sets
+		std::vector<PhysicalObject*> physicalObjects;//For Physics
+		std::vector<PhysicalObject*> visualObjects;//For Camera
 	
 		const Vei2 worldSize = { 32,24 };
 		int terrainMap[32*24];

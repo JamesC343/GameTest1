@@ -29,7 +29,7 @@ class Camera// : public Entity
 		Graphics* gfx;
 		Player* target;
 
-		std::vector<PhysicalObject*>* entities;
+		std::vector<PhysicalObject*>* visualObjects;
 		
 		Surface* backgroundSprite;
 		Surface* terrainSprite;

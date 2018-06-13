@@ -1,8 +1,9 @@
 #include "MainWindow.h"
 #include "Player.h"
 
-Player::Player(std::string spritePath, RectI rect, Vei2 size, Vei2 position)
-	: PhysicalObject(spritePath, rect, size, position)
+Player::Player(Sprite* sprite, Vei2 size, Vei2 position)
+	: PhysicalObject(sprite, size, position, true)
+	, Entity()
 {
     //ctor
 }

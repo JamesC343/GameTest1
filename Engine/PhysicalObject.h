@@ -9,26 +9,28 @@
 class PhysicalObject
 {
     public:
-		PhysicalObject(std::string,RectI,Vei2,Vei2);
-        virtual ~PhysicalObject();
-		
-        virtual void routine(float) = 0;
+		PhysicalObject(Sprite*,Vei2,Vei2,const bool);
+        virtual ~PhysicalObject() = 0;
 
 		void applyGravityAndFriction(float);
-		Sprite getSprite();
         void move(Vei2);
-
-		RectI getHitBox();
-		Vector getVelocityVector();
 		void setGrounded();
 
+		Sprite getSprite();
+		RectI getHitBox();
+		RectI getSpriteBox();
+		Vector getVelocityVector();
+
     protected:
-        Sprite* sprite;
-		RectI hitBox;//+SpriteBox
+		const bool isMovable();
 		Vector velocityVector;
 		bool isGrounded;
 
     private:
+		const bool objectIsMovable;
+		Sprite * sprite;
+		RectI hitBox;
+		RectI spriteBox;
 };
 
 #endif // ENTITY_H
