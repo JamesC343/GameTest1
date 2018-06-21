@@ -76,3 +76,8 @@ int RectI::GetHeight() const
 {
 	return bottom - top;
 }
+
+int RectI::GetMinRadius() const
+{
+	return sqrt(GetWidth() * GetWidth() + GetHeight() * GetHeight()) / 2;
+}

@@ -12,22 +12,26 @@ class PhysicalObject
 		PhysicalObject(Sprite*,Vei2,Vei2,const bool);
         virtual ~PhysicalObject() = 0;
 
-		void applyGravityAndFriction(float);
-        void move(Vei2);
-		void setGrounded();
+		void ApplyGravityAndFriction(float);
+        void Move(Vei2);
+		void SetGrounded();
 
-		Sprite getSprite();
-		RectI getHitBox();
-		RectI getSpriteBox();
-		Vector getVelocityVector();
+		Sprite GetSprite();
+		RectI GetHitBox();
+		RectI GetSpriteBox();
+		Vector GetVelocityVector();
+		bool IsMoving();
+		bool IsPotentiallyProximate(PhysicalObject *other);
 
     protected:
-		const bool isMovable();
+		const bool IsMovable();
 		Vector velocityVector;
 		bool isGrounded;
 
     private:
 		const bool objectIsMovable;
+		int closeProximityZoneRadius;
+		int potentialZoneRadius;
 		Sprite * sprite;
 		RectI hitBox;
 		RectI spriteBox;

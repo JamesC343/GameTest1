@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Vei2.h"
+#include <cmath>
 
 class RectI
 {
@@ -19,6 +20,7 @@ public:
 	Vei2 getTopLeft();
 	int GetWidth() const;
 	int GetHeight() const;
+	int GetMinRadius() const;
 public:
 	int left;
 	int right;

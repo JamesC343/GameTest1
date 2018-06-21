@@ -20,48 +20,48 @@ Camera::~Camera()
     //dtor
 }
 
-void Camera::routine(float deltaTime)
+void Camera::Routine(float deltaTime)
 {
-	move(deltaTime);
+	Move(deltaTime);
 }
 
-void Camera::drawSprites()
+void Camera::DrawSprites()
 {
 	gfx->DrawSpriteNonChroma(0, 0, *backgroundSprite);
 
-	drawEntities();
-	drawTerrain();
+	DrawEntities();
+	DrawTerrain();
 
 	gfx->DrawSprite(wnd->mouse.GetPosX() - 16, wnd->mouse.GetPosY() - 24, *cursor, gfx->GetScreenRect());
 }
 
-void Camera::drawEntities()
+void Camera::DrawEntities()
 {
 	for (int i = 0; i < visualObjects->size(); i++)
 	{
 		PhysicalObject* visualObject = visualObjects->at(i);
 		gfx->DrawSprite(
-			visualObject->getHitBox().left / (20) - getTopLeft().x
-			, visualObject->getHitBox().top / (20) - getTopLeft().y
-			, visualObject->getSprite()
+			visualObject->GetHitBox().left / (20) - GetTopLeft().x
+			, visualObject->GetHitBox().top / (20) - GetTopLeft().y
+			, visualObject->GetSprite()
 			, gfx->GetScreenRect());
 	}
 }
 
-void Camera::drawTerrain()
+void Camera::DrawTerrain()
 {
 for (int i = 0; i < worldSize.x*worldSize.y; i++)
 		if (terrainMap[i] == 1)
-			gfx->DrawSpriteNonChroma(i%worldSize.x * 40 - getTopLeft().x, i/worldSize.x * 32 - getTopLeft().y, *terrainSprite);
+			gfx->DrawSpriteNonChroma(i%worldSize.x * 40 - GetTopLeft().x, i/worldSize.x * 32 - GetTopLeft().y, *terrainSprite);
 }
 
-void Camera::addTerrainMap(int* newMap, Vei2 mapSize)
+void Camera::AddTerrainMap(int* newMap, Vei2 mapSize)
 {
 	terrainMap = newMap;
 	worldSize = mapSize;
 }
 
-void Camera::move(float deltaTime)
+void Camera::Move(float deltaTime)
 {
 	//To incorporate deltaTime, use the distance between the camera and the targetPosition to determine a camera speed
 	//Use the camera speed, the deltaTime and the vector between the cameraPosition and the targetPosition
@@ -69,12 +69,12 @@ void Camera::move(float deltaTime)
 
 	Vei2 cursorPosition(wnd->mouse.GetPosX() - cameraSize.x / 2, wnd->mouse.GetPosY() - cameraSize.y / 2);
 	
-	Vei2 targetPosition = target->getHitBox().GetCenter() / (20) + cursorPosition;
+	Vei2 targetPosition = target->GetHitBox().GetCenter() / (20) + cursorPosition;
 
-	setPosition((cameraPos * 3 + targetPosition) / 4);//Camera Smoothing
+	SetPosition((cameraPos * 3 + targetPosition) / 4);//Camera Smoothing
 }
 
-void Camera::setPosition(Vei2 newPosition)
+void Camera::SetPosition(Vei2 newPosition)
 {
 	if (newPosition.x < boundary.left)
 		newPosition.x = boundary.left;
@@ -89,7 +89,7 @@ void Camera::setPosition(Vei2 newPosition)
 	cameraPos = newPosition;
 }
 
-Vei2 Camera::getTopLeft()
+Vei2 Camera::GetTopLeft()
 {
 	return { cameraPos.x - cameraSize.x / 2, cameraPos.y - cameraSize.y / 2 };
 }

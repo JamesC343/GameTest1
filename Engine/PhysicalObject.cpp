@@ -5,7 +5,8 @@ PhysicalObject::PhysicalObject(Sprite* sprite, Vei2 size, Vei2 position, const b
 		: sprite(sprite), hitBox (position, size.x - 1, size.y - 1), objectIsMovable(isMovable)
 {
 	velocityVector = { 0,0 };
-	setGrounded();
+	closeProximityZoneRadius = hitBox.GetMinRadius();
+	SetGrounded();
 }
 
 PhysicalObject::~PhysicalObject()
@@ -13,7 +14,7 @@ PhysicalObject::~PhysicalObject()
 	delete sprite;
 }
 
-void PhysicalObject::applyGravityAndFriction(float deltaTime)
+void PhysicalObject::ApplyGravityAndFriction(float deltaTime)
 {
 	int frictionFactor = 100 * (20) * deltaTime;
 
@@ -32,38 +33,53 @@ void PhysicalObject::applyGravityAndFriction(float deltaTime)
 		velocityVector.x = 0;
 }
 
-void PhysicalObject::move(Vei2 move)
+void PhysicalObject::Move(Vei2 move)
 {
     hitBox.move(move);
 }
 
-void PhysicalObject::setGrounded()
+void PhysicalObject::SetGrounded()
 {
 	velocityVector.y = 0;
 	isGrounded = true;
 }
 
-Sprite PhysicalObject::getSprite()
+Sprite PhysicalObject::GetSprite()
 {
 	return *sprite;
 }
 
-RectI PhysicalObject::getHitBox()
+RectI PhysicalObject::GetHitBox()
 {
 	return hitBox;
 }
 
-RectI PhysicalObject::getSpriteBox()
+RectI PhysicalObject::GetSpriteBox()
 {
 	return spriteBox;
 }
 
-Vector PhysicalObject::getVelocityVector()
+Vector PhysicalObject::GetVelocityVector()
 {
 	return velocityVector;
 }
 
-const bool PhysicalObject::isMovable()
+bool PhysicalObject::IsMoving()
+{
+	return !velocityVector.IsZero();
+}
+
+bool PhysicalObject::IsPotentiallyProximate(PhysicalObject * other)
+{
+	int distance = (hitBox.GetCenter() - other->GetHitBox().GetCenter()).GetLength();
+
+	if (distance < potentialZoneRadius + other->potentialZoneRadius)
+		return true;
+
+	return false;
+}
+
+const bool PhysicalObject::IsMovable()
 {
 	return objectIsMovable;
 }

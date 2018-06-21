@@ -57,3 +57,11 @@ int Vector::GetLengthSq() const
 {
 	return x * x + y * y;
 }
+
+bool Vector::IsZero() const
+{
+	if (x != 0 || y != 0)
+		return true;
+
+	return false;
+}

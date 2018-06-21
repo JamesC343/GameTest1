@@ -11,19 +11,19 @@ class Camera// : public Entity
     public:
         Camera(MainWindow*,Graphics*,Player*,std::vector<PhysicalObject*>*,RectI);
         virtual ~Camera();
-        void routine(float);
-        void drawSprites();
-		void addTerrainMap(int*,Vei2);
+        void Routine(float);
+        void DrawSprites();
+		void AddTerrainMap(int*,Vei2);
 
     protected:
 
     private:
-		void drawEntities();
-		void drawTerrain();
+		void DrawEntities();
+		void DrawTerrain();
 		
-        void move(float);
-        void setPosition(Vei2 newPosition);
-		Vei2 getTopLeft();
+        void Move(float);
+        void SetPosition(Vei2 newPosition);
+		Vei2 GetTopLeft();
 
 		MainWindow* wnd;
 		Graphics* gfx;

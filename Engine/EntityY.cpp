@@ -15,14 +15,14 @@ EntityY::~EntityY()
     //dtor
 }
 
-void EntityY::routine(float deltaTime)
+void EntityY::Routine(float deltaTime)
 {
-	applyGravityAndFriction(deltaTime);
+	ApplyGravityAndFriction(deltaTime);
 
-	decisionMaking();
+	DecisionMaking();
 }
 
-void EntityY::decisionMaking()
+void EntityY::DecisionMaking()
 {
 	//if idle choose random case
 	//use a clock and a time for a previously selected case to identify if idle or not
@@ -32,20 +32,20 @@ void EntityY::decisionMaking()
 	switch (decision)
 	{
 	case 0://Jump once or twice
-		jump(-100 * (randomNumber % 3 + 1));
+		Jump(-100 * (randomNumber % 3 + 1));
 	
 	case 1://Walk towards player
 		return;
 	
 	case 2://Walk random direction
-		run(randomNumber * ((randomNumber % 3) - 1) * 10);
+		Run(randomNumber * ((randomNumber % 3) - 1) * 10);
 	
 	default://Wait for a few seconds
 		return;
 	}
 }
 
-void EntityY::run(int xRun)
+void EntityY::Run(int xRun)
 {
     int runMax = 150;
 
@@ -59,7 +59,7 @@ void EntityY::run(int xRun)
     }
 }
 
-void EntityY::jump(int yJump)
+void EntityY::Jump(int yJump)
 {
     if(isGrounded)
 		velocityVector.y += yJump;

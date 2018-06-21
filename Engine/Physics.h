@@ -9,17 +9,27 @@ class Physics
     public:
         Physics(Player*,std::vector<PhysicalObject*>*);
         virtual ~Physics();
-		void routine(float);
-		void addTerrainMap(int*,Vei2);
+		void Routine(float);
+		void AddTerrainMap(int*,Vei2);
 
     protected:
 
     private:
-		void moveEntitiesLegacy(float);
-		bool isCollisionLegacy(RectI,Vei2);
+		void PopulateMovingPhysicalObjects();
+		void GetProximatePairs();
+		void MoveEntitiesLegacy(float);
+		bool IsCollisionLegacy(RectI,Vei2);
+
+		struct physicalObjectPair
+		{
+			PhysicalObject* a;
+			PhysicalObject* b;
+		};
 
 		Player* target;
 		std::vector<PhysicalObject*>* entities;
+		std::vector<PhysicalObject*> movingPhysicalObjects;
+		std::vector<physicalObjectPair> proximatePairs;
 
 		int* terrainMap;
 		Vei2 worldSize;

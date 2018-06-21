@@ -5,6 +5,6 @@ public:
 	Entity();
 	virtual ~Entity();
 
-	virtual void routine(float) = 0;
+	virtual void Routine(float) = 0;
 };
 

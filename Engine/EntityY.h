@@ -10,13 +10,13 @@ class EntityY : public PhysicalObject, public Entity
     public:
         EntityY(Sprite*,Vei2, Vei2);
         virtual ~EntityY();
-        void routine(float);
+        void Routine(float);
 
     protected:
     private:
-        void decisionMaking();
-        void run(int);
-        void jump(int);
+        void DecisionMaking();
+        void Run(int);
+        void Jump(int);
 };
 
 #endif // ENTITYY_H

@@ -15,6 +15,7 @@ public:
 	Vector& operator/=(float rhs);
 	float GetLength() const;
 	int GetLengthSq() const;
+	bool IsZero() const;
 public:
 	float x;
 	float y;

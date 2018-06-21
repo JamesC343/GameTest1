@@ -42,10 +42,10 @@ Game::Game( MainWindow& wnd ) :	wnd( wnd )
 	
 	//camera = new Camera(&wnd, gfx, player, &entities, { 0 + 320, worldSize.x * 40 - 320, 0 + 240, worldSize.y * 32 - 240 } );
 	camera = new Camera(&wnd, gfx, player, &visualObjects, { 0, worldSize.x * 40, 0, worldSize.y * 32 } );
-	camera->addTerrainMap(terrainMap, worldSize);
+	camera->AddTerrainMap(terrainMap, worldSize);
 
 	physics = new Physics(player, &physicalObjects);
-	physics->addTerrainMap(terrainMap, worldSize);
+	physics->AddTerrainMap(terrainMap, worldSize);
 
 	ft.Mark();
 }
@@ -64,27 +64,27 @@ void Game::UpdateModel()
 
 	if( wnd.kbd.KeyIsPressed( 'A' ) )
 	{
-		player->run(-100 * (20));
+		player->Run(-100 * (20));
 	}
 	if( wnd.kbd.KeyIsPressed( 'D' ) )
 	{
-		player->run(100 * (20));
+		player->Run(100 * (20));
 	}
 	if( wnd.kbd.KeyIsPressed( VK_SPACE ) )
 	{
-		player->jump(-750 * (20));
+		player->Jump(-750 * (20));
 	}
 	
 	for (int i = 0; i < entities.size(); i++)
-		entities.at(i)->routine(deltaTime);
+		entities.at(i)->Routine(deltaTime);
 
-	physics->routine(deltaTime);
-	camera->routine(deltaTime);
+	physics->Routine(deltaTime);
+	camera->Routine(deltaTime);
 }
 
 void Game::ComposeFrame()
 {
-	camera->drawSprites();
+	camera->DrawSprites();
 }
 
 void Game::loadTerrainMap()
@@ -150,5 +150,6 @@ void Game::loadDerivedSets()
 
 		if (loadObject != NULL)
 			physicalObjects.push_back(loadObject);
+			//visualObjects.push_back(loadObject);
 	}
 }

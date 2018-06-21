@@ -11,54 +11,98 @@ Physics::~Physics()
     //dtor
 }
 
-void Physics::routine(float deltaTime)
+void Physics::Routine(float deltaTime)
 {
-	moveEntitiesLegacy(deltaTime);
+	PopulateMovingPhysicalObjects();
+	//calculatePotentialZoneRadius
+	GetProximatePairs();
+	//getCollisionPairs();
+
+	//moveObjectsToNewPosition
+	
+	
+	
+	MoveEntitiesLegacy(deltaTime);
 }
 
-void Physics::addTerrainMap(int* newMap, Vei2 mapSize)
+void Physics::AddTerrainMap(int* newMap, Vei2 mapSize)
 {
 	terrainMap = newMap;
 	worldSize = mapSize;
 }
 
-void Physics::moveEntitiesLegacy(float deltaTime)
+void Physics::PopulateMovingPhysicalObjects()
+{
+	movingPhysicalObjects.clear();
+
+	PhysicalObject* loadObject;
+
+	for (int i = 0; i < entities->size(); i++)
+	{
+		loadObject = entities->at(i);
+
+		if (loadObject->IsMoving())
+			movingPhysicalObjects.push_back(loadObject);
+	}
+}
+
+void Physics::GetProximatePairs()
+{
+	PhysicalObject* objectA;
+	PhysicalObject* objectB;
+
+	while (!movingPhysicalObjects.empty() > 0)
+	{
+		objectA = movingPhysicalObjects.back();
+		movingPhysicalObjects.pop_back();
+
+		for (int i = 0; i < movingPhysicalObjects.size(); i++)
+		{
+			objectB = movingPhysicalObjects.at(i);
+
+			if (objectA->IsPotentiallyProximate(objectB))
+				proximatePairs.push_back({ objectA, objectB });
+		}
+	}
+}
+
+void Physics::MoveEntitiesLegacy(float deltaTime)
 {
 	for(int j = 0; j < entities->size(); j++)
 	{
 		PhysicalObject* entity = entities->at(j);
-		RectI hitBox = entity->getHitBox();
+		RectI hitBox = entity->GetHitBox();
 
-		Vector velocityVector = entity->getVelocityVector();
+		Vector velocityVector = entity->GetVelocityVector();
 
 		int xMove = velocityVector.x * deltaTime;
 		int yMove = velocityVector.y * deltaTime;
 
 		if(xMove < 0)
 		    for (int i = 0; i > xMove; i--)
-		        if (!isCollisionLegacy(entity->getHitBox(), Vei2(-1,0)))
-					entity->move({ -1, 0 });
+		        if (!IsCollisionLegacy(entity->GetHitBox(), Vei2(-1,0)))
+					entity->Move({ -1, 0 });
 
 		if(xMove > 0)
 		    for (int i = 0; i < xMove; i++)
-		        if (!isCollisionLegacy(entity->getHitBox(), Vei2(1,0)))
-					entity->move({ 1,0 });
+		        if (!IsCollisionLegacy(entity->GetHitBox(), Vei2(1,0)))
+					entity->Move({ 1,0 });
 
 		if(yMove < 0)
 		    for (int i = 0; i > yMove; i--)
-		        if (!isCollisionLegacy(entity->getHitBox(), Vei2(0,-1)))
-					entity->move({ 0,-1 });
+		        if (!IsCollisionLegacy(entity->GetHitBox(), Vei2(0,-1)))
+					entity->Move({ 0,-1 });
 
 		if(yMove > 0)
 		    for (int i = 0; i < yMove; i++)
-		        if (!isCollisionLegacy(entity->getHitBox(), Vei2(0,1)))
-					entity->move({ 0,1 });
+		        if (!IsCollisionLegacy(entity->GetHitBox(), Vei2(0,1)))
+					entity->Move({ 0,1 });
 		        else
-		            entity->setGrounded();
+		            entity->SetGrounded();
 	}
 }
 
-bool Physics::isCollisionLegacy(RectI hitBox, Vei2 move)
+bool Physics::IsCollisionLegacy(RectI hitBox, Vei2 move)
 {
     int tileXMin, tileXMax, tileYMin, tileYMax;
 

@@ -13,12 +13,12 @@ Player::~Player()
     //dtor
 }
 
-void Player::routine(float deltaTime)
+void Player::Routine(float deltaTime)
 {
-	applyGravityAndFriction(deltaTime);
+	ApplyGravityAndFriction(deltaTime);
 }
 
-void Player::run(int xRun)
+void Player::Run(int xRun)
 {
     int runMax = 300 * (20);
 
@@ -32,7 +32,7 @@ void Player::run(int xRun)
     }
 }
 
-void Player::jump(int yJump)
+void Player::Jump(int yJump)
 {
     if(isGrounded)
 		velocityVector.y += yJump;

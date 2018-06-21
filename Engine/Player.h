@@ -10,9 +10,9 @@ class Player : public PhysicalObject, public Entity
     public:
         Player(Sprite*,Vei2,Vei2);
         virtual ~Player();
-        void routine(float);
-        void run(int);
-        void jump(int);
+        void Routine(float);
+        void Run(int);
+        void Jump(int);
 
     protected:
     private:
