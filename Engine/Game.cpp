@@ -53,30 +53,46 @@ Game::Game( MainWindow& wnd ) :	wnd( wnd )
 void Game::Go()
 {
 	gfx->BeginFrame();
-	UpdateModel();
+
+	float deltaTime = ft.Mark();
+
+	while(deltaTime > 1000)
+	{
+		UpdateModel(1000);
+		deltaTime -= 1000;
+	}
+
+	UpdateModel(deltaTime);
+	
 	ComposeFrame();
 	gfx->EndFrame();
 }
 
-void Game::UpdateModel()
+void Game::UpdateModel(const float deltaTime)
 {
-	const float deltaTime = ft.Mark();
 
 	if( wnd.kbd.KeyIsPressed( 'A' ) )
 	{
 		player->Run(-100 * (20));
 	}
-	if( wnd.kbd.KeyIsPressed( 'D' ) )
+	if (wnd.kbd.KeyIsPressed('D'))
 	{
 		player->Run(100 * (20));
+	}
+	if (wnd.kbd.KeyIsPressed('P'))
+	{
+		int foo = 0;//BreakPoint
 	}
 	if( wnd.kbd.KeyIsPressed( VK_SPACE ) )
 	{
 		player->Jump(-750 * (20));
 	}
-	
+
 	for (int i = 0; i < entities.size(); i++)
 		entities.at(i)->Routine(deltaTime);
+
+	for (int i = 0; i < physicalObjects.size(); i++)
+		physicalObjects.at(i)->Routine();
 
 	physics->Routine(deltaTime);
 	camera->Routine(deltaTime);

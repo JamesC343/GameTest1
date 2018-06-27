@@ -1,7 +1,7 @@
 #include "Physics.h"
 
-Physics::Physics(Player* target, std::vector<PhysicalObject*>* entities)
-	: target (target), entities (entities)
+Physics::Physics(Player* target, std::vector<PhysicalObject*>* physicalObjects)
+	: target (target), physicalObjects(physicalObjects), entities(physicalObjects)
 {
     //ctor
 }
@@ -13,14 +13,20 @@ Physics::~Physics()
 
 void Physics::Routine(float deltaTime)
 {
-	PopulateMovingPhysicalObjects();
-	//calculatePotentialZoneRadius
+	GetMovingPhysicalObjects();
 	GetProximatePairs();
-	//getCollisionPairs();
+	GetCollisionPairs();
 
-	//moveObjectsToNewPosition
+	float collisionTime = 0;
+
+	for (int i = 0; i < collisions.size(); i++)
+		if (i == 0 || collisions.at(i).collisionTime < collisionTime)
+			collisionTime = collisions.at(i).collisionTime;
+
+	//moveObjects(deltaTime)
 	
-	
+	if (proximatePairs.size() > 0)
+		int i = 0;
 	
 	MoveEntitiesLegacy(deltaTime);
 }
@@ -31,37 +37,79 @@ void Physics::AddTerrainMap(int* newMap, Vei2 mapSize)
 	worldSize = mapSize;
 }
 
-void Physics::PopulateMovingPhysicalObjects()
+void Physics::GetMovingPhysicalObjects()
 {
 	movingPhysicalObjects.clear();
 
-	PhysicalObject* loadObject;
+	PhysicalObject* objectA;
 
-	for (int i = 0; i < entities->size(); i++)
+	for (int i = 0; i < physicalObjects->size(); i++)
 	{
-		loadObject = entities->at(i);
+		objectA = physicalObjects->at(i);
 
-		if (loadObject->IsMoving())
-			movingPhysicalObjects.push_back(loadObject);
+		if (objectA->IsMoving())
+			movingPhysicalObjects.push_back(objectA);
 	}
 }
 
 void Physics::GetProximatePairs()
 {
+	proximatePairs.clear();
+
 	PhysicalObject* objectA;
 	PhysicalObject* objectB;
 
-	while (!movingPhysicalObjects.empty() > 0)
+	for (int i = 0; i < movingPhysicalObjects.size(); i++)
 	{
-		objectA = movingPhysicalObjects.back();
-		movingPhysicalObjects.pop_back();
+		objectA = movingPhysicalObjects.at(i);
 
-		for (int i = 0; i < movingPhysicalObjects.size(); i++)
+		for (int j = 0; j < physicalObjects->size(); j++)
 		{
-			objectB = movingPhysicalObjects.at(i);
+			objectB = physicalObjects->at(j);
 
-			if (objectA->IsPotentiallyProximate(objectB))
-				proximatePairs.push_back({ objectA, objectB });
+			if (objectA != objectB)
+			{
+				int distance = (objectA->GetHitBox().GetCenter() - objectB->GetHitBox().GetCenter()).GetLength();
+				int objectAZoneRadius = objectA->GetPotentialZoneRadius();
+				int objectBZoneRadius = objectB->GetPotentialZoneRadius();
+
+				if(distance <= objectAZoneRadius + objectBZoneRadius)
+					proximatePairs.push_back({ objectA, objectB });
+			}
+		}
+	}
+}
+
+void Physics::GetCollisionPairs()
+{
+	collisions.clear();
+
+	PhysicalObjectPair proximatePair;
+
+	if (proximatePairs.size() > 1)
+		int breakpoint = 0;
+
+	for (int i = 0; i < proximatePairs.size(); i++)
+	{
+		proximatePair = proximatePairs.at(i);
+
+		int xDistance = proximatePair.a->GetHitBox().GetCenter().x - proximatePair.b->GetHitBox().GetCenter().x;
+		int yDistance = proximatePair.a->GetHitBox().GetCenter().y - proximatePair.b->GetHitBox().GetCenter().y;
+
+		int xVelocity = proximatePair.a->GetVelocityVector().x - proximatePair.b->GetVelocityVector().x;
+		int yVelocity = proximatePair.a->GetVelocityVector().y - proximatePair.b->GetVelocityVector().y;
+
+		int proximityZoneA = proximatePair.a->GetCloseProximityZoneRadius();
+		int proximityZoneB = proximatePair.b->GetCloseProximityZoneRadius();
+
+		int a = (xVelocity * xVelocity + yVelocity * yVelocity);
+		int b = (2 * xVelocity * xDistance + 2 * yVelocity * yDistance);
+		int c = (xDistance * xDistance + yDistance * yDistance + (proximityZoneA + proximityZoneB) * (proximityZoneA + proximityZoneB));
+
+		if (b * b >= 4 * a * c)
+		{
+			const float deltaTime = 0;
+			collisions.push_back({ proximatePair, deltaTime });
 		}
 	}
 }

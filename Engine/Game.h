@@ -42,7 +42,7 @@ class Game
 	
 	private:
 		void ComposeFrame();
-		void UpdateModel();
+		void UpdateModel(const float);
 		void loadTerrainMap();
 		void loadDerivedSets();
 	

@@ -6,7 +6,7 @@ PhysicalObject::PhysicalObject(Sprite* sprite, Vei2 size, Vei2 position, const b
 {
 	velocityVector = { 0,0 };
 	closeProximityZoneRadius = hitBox.GetMinRadius();
-	SetGrounded();
+	//SetGrounded();
 }
 
 PhysicalObject::~PhysicalObject()
@@ -14,28 +14,38 @@ PhysicalObject::~PhysicalObject()
 	delete sprite;
 }
 
+void PhysicalObject::Routine()
+{
+	CalculatePotentialZoneRadius();
+}
+
 void PhysicalObject::ApplyGravityAndFriction(float deltaTime)
 {
-	int frictionFactor = 100 * (20) * deltaTime;
+	if (IsMovable())
+	{
+		int frictionFactor = 100 * (20) * deltaTime;
 
-	if (isGrounded)
-		frictionFactor = 750 * (20) * deltaTime;
+		if (isGrounded)
+			frictionFactor = 750 * (20) * deltaTime;
 
-	//Gravity
-	velocityVector.y += 2500 * (20) * deltaTime;
+		//Gravity
+		if (!isGrounded)
+			velocityVector.y += 2500 * (20) * deltaTime;
 
-	//Friction
-	if (velocityVector.x > frictionFactor)
-		velocityVector.x -= frictionFactor;
-	else if (velocityVector.x < -frictionFactor)
-		velocityVector.x += frictionFactor;
-	else
-		velocityVector.x = 0;
+		//Friction
+		if (velocityVector.x > frictionFactor)
+			velocityVector.x -= frictionFactor;
+		else if (velocityVector.x < -frictionFactor)
+			velocityVector.x += frictionFactor;
+		else
+			velocityVector.x = 0;
+	}
 }
 
 void PhysicalObject::Move(Vei2 move)
 {
     hitBox.move(move);
+	isGrounded = false;
 }
 
 void PhysicalObject::SetGrounded()
@@ -64,19 +74,28 @@ Vector PhysicalObject::GetVelocityVector()
 	return velocityVector;
 }
 
-bool PhysicalObject::IsMoving()
+int PhysicalObject::GetCloseProximityZoneRadius()
 {
-	return !velocityVector.IsZero();
+	return closeProximityZoneRadius;
 }
 
-bool PhysicalObject::IsPotentiallyProximate(PhysicalObject * other)
+int PhysicalObject::GetPotentialZoneRadius()
 {
-	int distance = (hitBox.GetCenter() - other->GetHitBox().GetCenter()).GetLength();
+	return potentialZoneRadius;
+}
 
-	if (distance < potentialZoneRadius + other->potentialZoneRadius)
+bool PhysicalObject::IsMoving()
+{
+	//return !velocityVector.IsZero();
+	if (velocityVector.GetLengthSq() > 0)
 		return true;
 
 	return false;
+}
+
+void PhysicalObject::CalculatePotentialZoneRadius()
+{
+	potentialZoneRadius = closeProximityZoneRadius + velocityVector.GetLength();
 }
 
 const bool PhysicalObject::IsMovable()

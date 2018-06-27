@@ -15,21 +15,30 @@ class Physics
     protected:
 
     private:
-		void PopulateMovingPhysicalObjects();
+		void GetMovingPhysicalObjects();
 		void GetProximatePairs();
+		void GetCollisionPairs();
 		void MoveEntitiesLegacy(float);
 		bool IsCollisionLegacy(RectI,Vei2);
 
-		struct physicalObjectPair
+		struct PhysicalObjectPair
 		{
 			PhysicalObject* a;
 			PhysicalObject* b;
 		};
 
+		struct Collision
+		{
+			PhysicalObjectPair objectPair;
+			const float collisionTime;
+		};
+
 		Player* target;
-		std::vector<PhysicalObject*>* entities;
+		std::vector<PhysicalObject*>* physicalObjects;
+		std::vector<PhysicalObject*>* entities; //Legacy
 		std::vector<PhysicalObject*> movingPhysicalObjects;
-		std::vector<physicalObjectPair> proximatePairs;
+		std::vector<PhysicalObjectPair> proximatePairs;
+		std::vector<Collision> collisions;
 
 		int* terrainMap;
 		Vei2 worldSize;
