@@ -2,8 +2,8 @@
 #include "EntityY.h"
 #include "time.h"
 
-EntityY::EntityY(Sprite* sprite, Vei2 size, Vei2 position)
-	: PhysicalObject(sprite, size, position, true)
+EntityY::EntityY(Sprite* sprite, Vei2 position, Vei2 size)
+	: PhysicalObject(sprite, position, size, true)
 	, Entity()
 {
     //ctor

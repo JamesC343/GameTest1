@@ -4,6 +4,7 @@
 #include "Sprite.h"
 #include "String.h"
 #include "Vector.h"
+#include <assert.h>
 
 
 class PhysicalObject

@@ -69,12 +69,12 @@ Vei2 RectI::getTopLeft()
 
 int RectI::GetWidth() const
 {
-	return right - left;
+	return right - left + 1;
 }
 
 int RectI::GetHeight() const
 {
-	return bottom - top;
+	return bottom - top + 1;
 }
 
 int RectI::GetMinRadius() const

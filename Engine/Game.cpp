@@ -30,11 +30,11 @@ Game::Game( MainWindow& wnd ) :	wnd( wnd )
 	gfx = new Graphics(wnd);
 	
 	Sprite* playerSprite = new Sprite("images/player.bmp", { 0,55,0,60 });
-	player = new Player(playerSprite, { 55 * (20), 60 * (20) }, { 0 * (20), 0 * (20) });
+	player = new Player(playerSprite, { 0 * (20), 0 * (20) }, { 55 * (20), 60 * (20) });
 	entities.push_back(player);
 
 	Sprite* yorpSprite = new Sprite("images/yorp.bmp", { 0,29,0,42 });
-	entities.push_back(new EntityY(yorpSprite, { 29 * (20), 42 * (20) }, { 400 * (20), 200 * (20) }));
+	entities.push_back(new EntityY(yorpSprite, { 400 * (20), 200 * (20) }, { 29 * (20), 42 * (20) }));
 
 	loadTerrainMap();
 
@@ -56,10 +56,10 @@ void Game::Go()
 
 	float deltaTime = ft.Mark();
 
-	while(deltaTime > 1000)
+	while(deltaTime > 1.0)
 	{
-		UpdateModel(1000);
-		deltaTime -= 1000;
+		UpdateModel(1.0);
+		deltaTime -= 1.0;
 	}
 
 	UpdateModel(deltaTime);
@@ -140,7 +140,7 @@ void Game::loadTerrainMap()
 	auto mapIterator2 = map.cbegin();
 	for (int i = 0; i < worldSize.x*worldSize.y; i++, ++mapIterator2)
 		if(*mapIterator2 == 'B')
-			terrainObjects.push_back(new TerrainObject(thisIsAMemoryLeak, Vei2{ 40, 32 }, Vei2{ i%worldSize.x * 40 * (20), i / worldSize.x * 32 * (20) }));
+			terrainObjects.push_back(new TerrainObject(thisIsAMemoryLeak, Vei2{ i%worldSize.x * 40 * (20), i / worldSize.x * 32 * (20) }, Vei2{ 40 * (20), 32 * (20) }));
 }
 
 void Game::loadDerivedSets()

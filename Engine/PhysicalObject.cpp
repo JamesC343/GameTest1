@@ -1,9 +1,12 @@
 #include "PhysicalObject.h"
 
 
-PhysicalObject::PhysicalObject(Sprite* sprite, Vei2 size, Vei2 position, const bool isMovable)
+PhysicalObject::PhysicalObject(Sprite* sprite, Vei2 position, Vei2 size, const bool isMovable)
 		: sprite(sprite), hitBox (position, size.x - 1, size.y - 1), objectIsMovable(isMovable)
 {
+	assert(hitBox.GetWidth() % 2 == 0);
+	assert(hitBox.GetHeight() % 2 == 0);
+
 	velocityVector = { 0,0 };
 	closeProximityZoneRadius = hitBox.GetMinRadius();
 	//SetGrounded();

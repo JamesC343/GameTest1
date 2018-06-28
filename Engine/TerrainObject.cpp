@@ -2,8 +2,8 @@
 
 
 
-TerrainObject::TerrainObject(Sprite* sprite, Vei2 size, Vei2 position)
-	: PhysicalObject(sprite, size, position, false)
+TerrainObject::TerrainObject(Sprite* sprite, Vei2 position, Vei2 size)
+	: PhysicalObject(sprite, position, size, false)
 {
 }
 
