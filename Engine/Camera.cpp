@@ -1,5 +1,7 @@
 #include "Camera.h"
 #include "MainWindow.h"
+#include "Font.h"
+#include <iostream>
 
 Camera::Camera(MainWindow* wnd, Graphics* gfx, Player* target, std::vector<PhysicalObject*>* visualObjects, RectI boundary)
 	: wnd (wnd), gfx (gfx), boundary (boundary), target (target), visualObjects(visualObjects), cameraSize(640, 480), cameraPos(0,0)
@@ -9,7 +11,9 @@ Camera::Camera(MainWindow* wnd, Graphics* gfx, Player* target, std::vector<Physi
 	this->boundary.top += cameraSize.y / 2;
 	this->boundary.bottom -= cameraSize.y / 2;
 
+	FPSBackGround = new Surface("images/FPSBackGround.bmp");
 	backgroundSprite = new Surface("images/background.bmp");
+	foregroundSprite = new Surface("images/foreground.bmp");
 	terrainSprite = new Surface("images/terrain.bmp");
 	cursor = new Sprite("marle32x48.bmp", { 32,64,48,96 });
 }
@@ -23,16 +27,41 @@ Camera::~Camera()
 void Camera::Routine(float deltaTime)
 {
 	Move(deltaTime);
+
+	ticksPerSecond = (int)(1.0 / deltaTime);
+
+	//if(displayFramesPerSecond)
+	//	std::cout << "Frames Per Second: " << 1 / deltaTime << "\n";
+	
+	/*deltaTimeCount += deltaTime;
+	framesAccumulated++;
+
+	if (deltaTimeCount > 1)
+	{
+		deltaTimeCount -= 1;
+		framesPerSecond = framesAccumulated;
+		framesAccumulated = 0;
+	}*/
 }
 
-void Camera::DrawSprites()
+void Camera::DrawSprites(const float deltaTime)
 {
-	gfx->DrawSpriteNonChroma(0, 0, *backgroundSprite);
+	//gfx->DrawSpriteNonChroma(0, 0, *backgroundSprite);
+	//gfx->DrawSpriteNonChroma(0 - GetTopLeft().x, 608 - GetTopLeft().y, foregroundSprite->GetRect(), gfx->GetScreenRect(), *foregroundSprite);
 
 	DrawEntities();
-	DrawTerrain();
+	//DrawTerrain(); //legacy?
 
 	gfx->DrawSprite(wnd->mouse.GetPosX() - 16, wnd->mouse.GetPosY() - 24, *cursor, gfx->GetScreenRect());
+
+	if (displayFramesPerSecond)
+	{
+		framesPerSecond = (int)(1.0 / deltaTime);
+
+		gfx->DrawSpriteNonChroma(0, 0, *FPSBackGround);
+		font.DrawText("FPS:" + std::to_string(framesPerSecond), Vector<int>({ 7, 4 }), Colors::Black, gfx);
+		font.DrawText("TPS:" + std::to_string(ticksPerSecond), Vector<int>({ 7, 34 }), Colors::White, gfx);
+	}
 }
 
 void Camera::DrawEntities()
@@ -48,17 +77,22 @@ void Camera::DrawEntities()
 	}
 }
 
-void Camera::DrawTerrain()
-{
-for (int i = 0; i < worldSize.x*worldSize.y; i++)
-		if (terrainMap[i] == 1)
-			gfx->DrawSpriteNonChroma(i%worldSize.x * 40 - GetTopLeft().x, i/worldSize.x * 32 - GetTopLeft().y, *terrainSprite);
-}
+//void Camera::DrawTerrain()	//Legacy
+//{
+//for (int i = 0; i < worldSize.x*worldSize.y; i++)
+//		if (terrainMap[i] == 2)
+//			gfx->DrawSpriteNonChroma(i%worldSize.x * 40 - GetTopLeft().x, i/worldSize.x * 32 - GetTopLeft().y, *terrainSprite);
+//}
 
-void Camera::AddTerrainMap(int* newMap, Vei2 mapSize)
+//void Camera::AddTerrainMap(int* newMap, Vector<int> mapSize) //Legacy
+//{
+//	terrainMap = newMap;
+//	worldSize = mapSize;
+//}
+
+void Camera::ToggleDisplayFPS()
 {
-	terrainMap = newMap;
-	worldSize = mapSize;
+	displayFramesPerSecond = !displayFramesPerSecond;
 }
 
 void Camera::Move(float deltaTime)
@@ -67,14 +101,14 @@ void Camera::Move(float deltaTime)
 	//Use the camera speed, the deltaTime and the vector between the cameraPosition and the targetPosition
 	//	to calculate the new position
 
-	Vei2 cursorPosition(wnd->mouse.GetPosX() - cameraSize.x / 2, wnd->mouse.GetPosY() - cameraSize.y / 2);
+	Vector<int> cursorPosition(wnd->mouse.GetPosX() - cameraSize.x / 2, wnd->mouse.GetPosY() - cameraSize.y / 2);
 	
-	Vei2 targetPosition = target->GetHitBox().GetCenter() / (20) + cursorPosition;
+	Vector<int> targetPosition = target->GetHitBox().GetCenter() / (20) + cursorPosition;
 
 	SetPosition((cameraPos * 3 + targetPosition) / 4);//Camera Smoothing
 }
 
-void Camera::SetPosition(Vei2 newPosition)
+void Camera::SetPosition(Vector<int> newPosition)
 {
 	if (newPosition.x < boundary.left)
 		newPosition.x = boundary.left;
@@ -89,7 +123,7 @@ void Camera::SetPosition(Vei2 newPosition)
 	cameraPos = newPosition;
 }
 
-Vei2 Camera::GetTopLeft()
+Vector<int> Camera::GetTopLeft()
 {
 	return { cameraPos.x - cameraSize.x / 2, cameraPos.y - cameraSize.y / 2 };
 }

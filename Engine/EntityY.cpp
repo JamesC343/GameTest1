@@ -2,9 +2,8 @@
 #include "EntityY.h"
 #include "time.h"
 
-EntityY::EntityY(Sprite* sprite, Vei2 position, Vei2 size)
-	: PhysicalObject(sprite, position, size, true)
-	, Entity()
+EntityY::EntityY(Sprite* sprite, Vector<int> position, Vector<int> size, std::string name)
+	: Entity(sprite, position, size, name)
 {
     //ctor
 	srand (time(NULL));
@@ -32,13 +31,13 @@ void EntityY::DecisionMaking()
 	switch (decision)
 	{
 	case 0://Jump once or twice
-		Jump(-100 * (randomNumber % 3 + 1));
+		Jump(-200 * (randomNumber % 3 + 1) * (20));
 	
 	case 1://Walk towards player
 		return;
 	
 	case 2://Walk random direction
-		Run(randomNumber * ((randomNumber % 3) - 1) * 10);
+		Run(randomNumber * ((randomNumber % 3) - 1) * 100 * (20));
 	
 	default://Wait for a few seconds
 		return;
@@ -47,22 +46,17 @@ void EntityY::DecisionMaking()
 
 void EntityY::Run(int xRun)
 {
-    int runMax = 150;
+	int runMax = 150 * (20);
+	int run = isGrounded ? xRun : xRun / 5;
 
-    if(isGrounded)
-    {
-		velocityVector.x += xRun;
-        if (velocityVector.x < -runMax)
-			velocityVector.x = -runMax;
-        if (velocityVector.x > runMax)
-			velocityVector.x = runMax;
-    }
+	addVelocity({ (GetVelocityVector().x + run > runMax) ? runMax - GetVelocityVector().x
+		: (GetVelocityVector().x + run < -runMax) ? -runMax - GetVelocityVector().x : run, 0 });
 }
 
 void EntityY::Jump(int yJump)
 {
     if(isGrounded)
-		velocityVector.y += yJump;
+		addVelocity({ 0, yJump });
 
     isGrounded = false;
 }

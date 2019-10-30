@@ -5,7 +5,8 @@
 class TerrainObject : public PhysicalObject
 {
 public:
-	TerrainObject(Sprite*, Vei2, Vei2);
+	TerrainObject(Sprite*, Vector<int>, Vector<int>, std::string);
 	~TerrainObject();
+private:
 };
 

@@ -143,6 +143,7 @@
     <ClInclude Include="DXErr.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="EntityY.h" />
+    <ClInclude Include="Font.h" />
     <ClInclude Include="FrameTimer.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Graphics.h" />
@@ -159,13 +160,13 @@
     <ClInclude Include="Terrain.h" />
     <ClInclude Include="TerrainObject.h" />
     <ClInclude Include="Vector.h" />
-    <ClInclude Include="Vei2.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="DXErr.cpp" />
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="EntityY.cpp" />
+    <ClCompile Include="Font.cpp" />
     <ClCompile Include="FrameTimer.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Graphics.cpp" />
@@ -181,8 +182,6 @@
     <ClCompile Include="Surface.cpp" />
     <ClCompile Include="Terrain.cpp" />
     <ClCompile Include="TerrainObject.cpp" />
-    <ClCompile Include="Vector.cpp" />
-    <ClCompile Include="Vei2.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="FramebufferPS.hlsl">
@@ -250,7 +249,9 @@
     <ResourceCompile Include="Resource.rc" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="bitmap1.bmp" />
     <Image Include="Chili.ico" />
+    <Image Include="images\Fixedsys16x28.bmp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

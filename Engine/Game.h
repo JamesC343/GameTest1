@@ -24,7 +24,6 @@
 #include "Keyboard.h"
 #include "Mouse.h"
 #include "Graphics.h"
-#include "Surface.h"
 #include "Player.h"
 #include "EntityY.h"
 #include "TerrainObject.h"
@@ -41,21 +40,28 @@ class Game
 		void Go();
 	
 	private:
-		void ComposeFrame();
+		void ComposeFrame(const float);
 		void UpdateModel(const float);
-		void loadTerrainMap();
+		void loadTerrainMap(const Vector<int>);
 		void loadDerivedSets();
 	
 	private:
 		MainWindow& wnd;
 		Graphics* gfx;
 		Physics* physics;
-		FrameTimer ft;
+		FrameTimer physicsTimer;
+		FrameTimer frameTimer;
+
+		float deltaTime = 0;
+		float residualDeltaTime = 0;
+		const float maximumTickTime = (1.0 / 60.0);//Would be best to keep this close to a value of a realistic FPS, otherwise it looks funny due to the character moving before the frame has been drawn
+													//In an ideal world my physics would handle 'forces' such as gravity more dynamically so that I don't get strange behaviour from a non static tick time
+													//The question is.. How do I increase the FPS??
 
 		Camera* camera;
 		Player* player;
 		
-		//Prime Sets
+		//Primary Sets
 		std::vector<Entity*> entities;
 		std::vector<TerrainObject*> terrainObjects;
 
@@ -63,6 +69,6 @@ class Game
 		std::vector<PhysicalObject*> physicalObjects;//For Physics
 		std::vector<PhysicalObject*> visualObjects;//For Camera
 	
-		const Vei2 worldSize = { 32,24 };
-		int terrainMap[32*24];
+		//const Vector<int> worldSize = { 32,24 }; //Legacy //Not Needed
+		//int terrainMap[32*24]; //Legacy
 };

@@ -1,23 +1,73 @@
 #pragma once
+#include <cmath>
 
+template<typename T>
 class Vector
 {
 public:
 	Vector() = default;
-	Vector(float x_in, float y_in);
-	Vector operator+(const Vector& rhs) const;
-	Vector& operator+=(const Vector& rhs);
-	Vector operator*(float rhs) const;
-	Vector& operator*=(float rhs);
-	Vector operator-(const Vector& rhs) const;
-	Vector& operator-=(const Vector& rhs);
-	Vector operator/(float rhs) const;
-	Vector& operator/=(float rhs);
-	float GetLength() const;
-	int GetLengthSq() const;
-	bool IsZero() const;
+	Vector(T x_in, T y_in)
+		: x(x_in), y(y_in)
+	{}
+	Vector(const Vector<int>& src)
+		:
+		x((T)src.x),
+		y((T)src.y)
+	{}
+	Vector(const Vector<float>& src)
+		:
+		x((T)src.x),
+		y((T)src.y)
+	{}
+	Vector operator+(const Vector& rhs) const
+	{
+		return Vector(x + rhs.x, y + rhs.y);
+	}
+	Vector& operator+=(const Vector& rhs)
+	{
+		return *this = *this + rhs;
+	}
+	Vector operator*(T rhs) const
+	{
+		return Vector(x * rhs, y * rhs);
+	}
+	Vector& operator*=(T rhs)
+	{
+		return *this = *this * rhs;
+	}
+	Vector operator-(const Vector& rhs) const
+	{
+		return Vector(x - rhs.x, y - rhs.y);
+	}
+	Vector& operator-=(const Vector& rhs)
+	{
+		return *this = *this - rhs;
+	}
+	Vector operator/(T rhs) const
+	{
+		return Vector(x / rhs, y / rhs);
+	}
+	Vector& operator/=(T rhs)
+	{
+		return *this = *this / rhs;
+	}
+	T GetLength() const
+	{
+		return std::sqrt(T(GetLengthSq()));
+	}
+	int GetLengthSq() const
+	{
+		return x * x + y * y;
+	}
+	bool IsZero() const
+	{
+		if (x != 0 || y != 0)
+			return true;
+
+		return false;
+	}
 public:
-	float x;
-	float y;
+	T x;
+	T y;
 };
 

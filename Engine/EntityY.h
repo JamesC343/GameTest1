@@ -5,12 +5,12 @@
 #include "Surface.h"
 
 
-class EntityY : public PhysicalObject, public Entity
+class EntityY : public Entity //public PhysicalObject, public Entity
 {
     public:
-        EntityY(Sprite*,Vei2, Vei2);
-        virtual ~EntityY();
-        void Routine(float);
+        EntityY(Sprite*,Vector<int>, Vector<int>, std::string);
+        ~EntityY();
+        void Routine(float) override;
 
     protected:
     private:

@@ -5,42 +5,51 @@
 
 #include "Player.h"
 #include "MainWindow.h"
+#include "Font.h"
 
 class Camera// : public Entity
 {
     public:
         Camera(MainWindow*,Graphics*,Player*,std::vector<PhysicalObject*>*,RectI);
         virtual ~Camera();
-        void Routine(float);
-        void DrawSprites();
-		void AddTerrainMap(int*,Vei2);
+        void Routine(const float);
+        void DrawSprites(const float);
+		//void AddTerrainMap(int*,Vector<int>); //Legacy
+		void ToggleDisplayFPS();
 
     protected:
 
     private:
 		void DrawEntities();
-		void DrawTerrain();
+		//void DrawTerrain(); //Legacy
 		
         void Move(float);
-        void SetPosition(Vei2 newPosition);
-		Vei2 GetTopLeft();
+        void SetPosition(Vector<int> newPosition);
+		Vector<int> GetTopLeft();
 
 		MainWindow* wnd;
 		Graphics* gfx;
+		bool displayFramesPerSecond = true;
+		int ticksPerSecond = 0;
+		int framesPerSecond = 0;
+
 		Player* target;
 
 		std::vector<PhysicalObject*>* visualObjects;
 		
+		Font font = "images/Fixedsys16x28.bmp";
+		Surface* FPSBackGround;
 		Surface* backgroundSprite;
+		Surface* foregroundSprite;
 		Surface* terrainSprite;
         Sprite* cursor;
 		
-		Vei2 cameraSize;
-		Vei2 cameraPos;
+		Vector<int> cameraSize;
+		Vector<int> cameraPos;
 		RectI boundary;
 
-		int* terrainMap;
-		Vei2 worldSize;
+		//int* terrainMap; //Legacy
+		//Vector<int> worldSize; //Legacy
 };
 
 #endif // CAMERA_H

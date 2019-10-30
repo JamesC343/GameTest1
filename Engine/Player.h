@@ -5,12 +5,12 @@
 #include "Surface.h"
 
 
-class Player : public PhysicalObject, public Entity
+class Player : public Entity
 {
     public:
-        Player(Sprite*,Vei2,Vei2);
-        virtual ~Player();
-        void Routine(float);
+		Player(Sprite*, Vector<int>, Vector<int>, std::string);
+        ~Player();
+        void Routine(float) override;
         void Run(int);
         void Jump(int);
 

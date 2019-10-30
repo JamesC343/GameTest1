@@ -1,7 +1,7 @@
 #include "Physics.h"
 
-Physics::Physics(Player* target, std::vector<PhysicalObject*>* physicalObjects)
-	: target (target), physicalObjects(physicalObjects), entities(physicalObjects)
+Physics::Physics(Player* target/*, std::vector<PhysicalObject*>* physicalObjects//Legacy */, std::vector<TerrainObject*>* terrainObjects, std::vector<Entity*>* entities)
+	: target (target)/*, physicalObjects(physicalObjects)//Legacy */, terrainObjects(terrainObjects), entities(entities)
 {
     //ctor
 }
@@ -11,50 +11,188 @@ Physics::~Physics()
     //dtor
 }
 
-void Physics::Routine(float deltaTime)
+void Physics::Routine(float deltaTime)//Isn't it funny how an x collision causes y distance to be reduced? This applies to both jumping up and also falling back down
 {
-	GetMovingPhysicalObjects();
-	GetProximatePairs();
-	GetCollisionPairs();
-
-	float collisionTime = 0;
-
-	for (int i = 0; i < collisions.size(); i++)
-		if (i == 0 || collisions.at(i).collisionTime < collisionTime)
-			collisionTime = collisions.at(i).collisionTime;
-
-	//moveObjects(deltaTime)
+	std::vector<Entity*> movingEntities = GetMovingEntities();
 	
-	if (proximatePairs.size() > 0)
-		int i = 0;
-	
-	MoveEntitiesLegacy(deltaTime);
+	for (int i = 0; i < movingEntities.size(); i++)
+	{
+		Entity* entity = movingEntities.at(i);
+		float elapsedDeltaTime = 0;
+
+		while (elapsedDeltaTime < deltaTime)
+		{
+			std::vector<TerrainObject*> proximateTerrain = GetProximateTerrain(entity, deltaTime - elapsedDeltaTime);
+			terrainCollision nextCollision = GetNextTerrainCollision(entity, proximateTerrain, deltaTime - elapsedDeltaTime);
+			if (nextCollision.collisionTime != -1)
+			{
+				assert(nextCollision.collisionTime != 0);
+				elapsedDeltaTime += nextCollision.collisionTime;
+
+				entity->Move(nextCollision.distance);
+				
+				switch (nextCollision.collisionType)
+				{//0,1,2,3 - left,right,up,down
+				case 0:
+					entity->SetXCollision();
+					break;
+				case 1:
+					entity->SetXCollision();
+					break;
+				case 2:
+					entity->SetYCollision();
+					break;
+				case 3:
+					//std::cout << "SetGrounded True\n";
+					entity->SetGrounded(true);
+					break;
+				case 4:
+					//std::cout << "SetGrounded False\n";
+					entity->SetGrounded(false);
+					break;
+				}
+			}
+			else
+				entity->Move(deltaTime - elapsedDeltaTime), elapsedDeltaTime = deltaTime;
+		}
+	}
+
+	//MoveEntitiesLegacy(deltaTime);
 }
 
-void Physics::AddTerrainMap(int* newMap, Vei2 mapSize)
+/*void Physics::AddTerrainMap(int* newMap, Vector<int> mapSize)
 {
 	terrainMap = newMap;
 	worldSize = mapSize;
+}*/
+
+void Physics::Debug()
+{
+	debugOnThisFrame = true;
 }
 
-void Physics::GetMovingPhysicalObjects()
+std::vector<Entity*> Physics::GetMovingEntities()
 {
-	movingPhysicalObjects.clear();
+	std::vector<Entity*> movingEntities;
 
-	PhysicalObject* objectA;
+	for (int i = 0; i < entities->size(); i++)
+		if (entities->at(i)->IsMoving())
+			movingEntities.push_back(entities->at(i));
 
-	for (int i = 0; i < physicalObjects->size(); i++)
+	return movingEntities;
+}
+
+std::vector<TerrainObject*> Physics::GetProximateTerrain(Entity* entity, float deltaTime)
+{
+	std::vector<TerrainObject*> proximateTerrain;
+	TerrainObject* terrain;
+
+	int entityVelocityLength = entity->GetVelocityVector().GetLength() * deltaTime;
+
+	for (int j = 0; j < terrainObjects->size(); j++)
 	{
-		objectA = physicalObjects->at(i);
+		terrain = terrainObjects->at(j);
 
-		if (objectA->IsMoving())
-			movingPhysicalObjects.push_back(objectA);
+		int distance = (entity->GetHitBox().GetCenter() - terrain->GetHitBox().GetCenter()).GetLength();
+
+		if (distance <= entity->GetCloseProximityZoneRadius() + terrain->GetCloseProximityZoneRadius() + entityVelocityLength)
+			proximateTerrain.push_back(terrain);
 	}
+
+	return proximateTerrain;
 }
 
-void Physics::GetProximatePairs()
+terrainCollision Physics::GetNextTerrainCollision(Entity* entity, std::vector<TerrainObject*> proximateTerrain, float deltaTime)
 {
-	proximatePairs.clear();
+	terrainCollision collision;
+	std::vector<terrainCollision> collisions;
+
+	RectI entityHitBox = entity->GetHitBox();
+	Vector<float> velocityVector = entity->GetVelocityVector();
+
+	PhysicalObject* terrain;
+	RectI terrainHitBox;
+
+	float xCollisionTime = -1;
+	float yCollisionTime = -1;
+	Vector<int> collisionDistance = { 0,0 };
+	int collisionType = -1;
+	
+	//Check for collisions
+	for (int i = 0; i < proximateTerrain.size(); i++)
+	{
+		terrain = proximateTerrain.at(i);
+		terrainHitBox = terrain->GetHitBox();
+
+		assert(!(entityHitBox.right >= terrainHitBox.left && entityHitBox.left <= terrainHitBox.right && entityHitBox.bottom >= terrainHitBox.top && entityHitBox.top <= terrainHitBox.bottom));
+
+		xCollisionTime = ((entityHitBox.right < terrainHitBox.left || entityHitBox.left > terrainHitBox.right) && velocityVector.x == 0) ? -1
+			: (entityHitBox.right < terrainHitBox.left) ? (terrainHitBox.left - entityHitBox.right) / velocityVector.x
+			: (entityHitBox.left > terrainHitBox.right) ? (terrainHitBox.right - entityHitBox.left) / velocityVector.x : 0;
+
+		yCollisionTime = ((entityHitBox.bottom < terrainHitBox.top || entityHitBox.top > terrainHitBox.bottom) && velocityVector.y == 0) ? -1
+			: (entityHitBox.bottom < terrainHitBox.top) ? (terrainHitBox.top - entityHitBox.bottom) / velocityVector.y
+			: (entityHitBox.top > terrainHitBox.bottom) ? (terrainHitBox.bottom - entityHitBox.top) / velocityVector.y : 0;
+
+		//--Now that Physics moves objects by distance specifically instead of time, could consider to re-simplify this function
+		collisionDistance.x = (entityHitBox.right < terrainHitBox.left) ? terrainHitBox.left - entityHitBox.right - 1
+			: (entityHitBox.left > terrainHitBox.right) ? terrainHitBox.right - entityHitBox.left + 1 : 0;
+
+		collisionDistance.y = (entityHitBox.bottom < terrainHitBox.top) ? terrainHitBox.top - entityHitBox.bottom - 1
+			: (entityHitBox.top > terrainHitBox.bottom) ? terrainHitBox.bottom - entityHitBox.top + 1: 0;
+		//--
+
+		if (xCollisionTime >= 0 && xCollisionTime <= deltaTime && yCollisionTime >= 0 && yCollisionTime <= deltaTime)
+		{
+			if (xCollisionTime <= yCollisionTime)
+				xCollisionTime = (entityHitBox.right + (velocityVector.x * yCollisionTime) < terrainHitBox.left
+					|| entityHitBox.left + (velocityVector.x * yCollisionTime) > terrainHitBox.right) ? -1 : yCollisionTime
+				, collisionType = (velocityVector.y > 0) ? 3 : 2;
+
+			else
+				yCollisionTime = (entityHitBox.bottom + (velocityVector.y * xCollisionTime) < terrainHitBox.top
+					|| entityHitBox.top + (velocityVector.y * xCollisionTime) > terrainHitBox.bottom) ? -1 : xCollisionTime
+				, collisionType = (velocityVector.x > 0) ? 1 : 0;
+
+			if (xCollisionTime != -1 && yCollisionTime != -1)
+				collisions.push_back(terrainCollision({ xCollisionTime, collisionType, collisionDistance }));
+		}
+	}
+
+	for (int i = 0; i < collisions.size(); i++)
+		if (collision.collisionTime == -1 || collisions.at(i).collisionTime < collision.collisionTime)
+			collision = collisions.at(i);
+
+	//Check for notGrounded if there is not already any collision
+	if (collision.collisionTime == -1 && entity->GetIsGrounded() && velocityVector.x != 0)
+	{
+		bool groundCollision = false;
+
+		Vector<int> checkBottomLeft = { entityHitBox.left + (int)(velocityVector.x * deltaTime), entityHitBox.bottom + 1 };
+		Vector<int> checkBottomRight = { entityHitBox.right + (int)(velocityVector.x * deltaTime), entityHitBox.bottom + 1 };
+
+		for (int i = 0; i < proximateTerrain.size() && !groundCollision; i++)
+			if (IsCollision(checkBottomLeft, proximateTerrain.at(i)->GetHitBox()) || IsCollision(checkBottomRight, proximateTerrain.at(i)->GetHitBox()))
+				groundCollision = true;
+
+		if (!groundCollision)
+			collision = { deltaTime, 4, Vector<int>({ (int)(velocityVector.x * deltaTime), 0 }) };
+	}
+
+	return collision;
+}
+
+bool Physics::IsCollision(Vector<int> point, RectI hitBox)
+{
+	if (point.x >= hitBox.left && point.x <= hitBox.right && point.y >= hitBox.top && point.y <= hitBox.bottom)
+		return true;
+
+	return false;
+}
+
+/*std::vector<PhysicalObjectPair> Physics::GetProximatePairs(std::vector<PhysicalObject*> movingPhysicalObjects, float deltaTime)
+{
+	std::vector<PhysicalObjectPair> proximatePairs;
 
 	PhysicalObject* objectA;
 	PhysicalObject* objectB;
@@ -70,19 +208,28 @@ void Physics::GetProximatePairs()
 			if (objectA != objectB)
 			{
 				int distance = (objectA->GetHitBox().GetCenter() - objectB->GetHitBox().GetCenter()).GetLength();
-				int objectAZoneRadius = objectA->GetPotentialZoneRadius();
-				int objectBZoneRadius = objectB->GetPotentialZoneRadius();
 
-				if(distance <= objectAZoneRadius + objectBZoneRadius)
+				int objectAProximityZoneRadius = objectA->GetCloseProximityZoneRadius();
+				int objectBProximityZoneRadius = objectB->GetCloseProximityZoneRadius();
+
+				int objectAVelocityLength = objectA->GetVelocityVector().GetLength();
+				int objectBVelocityLength = objectB->GetVelocityVector().GetLength();
+
+				if (distance <= objectAProximityZoneRadius + objectBProximityZoneRadius + (objectAVelocityLength + objectBVelocityLength) * deltaTime)
+				{
 					proximatePairs.push_back({ objectA, objectB });
+					std::cout << objectA->GetName() << " has potential to hit object:\t" << objectB->GetName() << "\tDistance: " << distance << "\n";
+				}
 			}
 		}
 	}
-}
 
-void Physics::GetCollisionPairs()
+	return proximatePairs;
+}*/
+
+/*std::vector<Collision> Physics::GetCollisionPairs(std::vector<PhysicalObjectPair> proximatePairs)
 {
-	collisions.clear();
+	std::vector<Collision> collisions;
 
 	PhysicalObjectPair proximatePair;
 
@@ -112,9 +259,11 @@ void Physics::GetCollisionPairs()
 			collisions.push_back({ proximatePair, deltaTime });
 		}
 	}
-}
 
-void Physics::MoveEntitiesLegacy(float deltaTime)
+	return collisions;
+}*/
+
+/*void Physics::MoveEntitiesLegacy(float deltaTime)
 {
 	for(int j = 0; j < entities->size(); j++)
 	{
@@ -128,29 +277,29 @@ void Physics::MoveEntitiesLegacy(float deltaTime)
 
 		if(xMove < 0)
 		    for (int i = 0; i > xMove; i--)
-		        if (!IsCollisionLegacy(entity->GetHitBox(), Vei2(-1,0)))
+		        if (!IsCollisionLegacy(entity->GetHitBox(), Vector<int>(-1,0)))
 					entity->Move({ -1, 0 });
 
 		if(xMove > 0)
 		    for (int i = 0; i < xMove; i++)
-		        if (!IsCollisionLegacy(entity->GetHitBox(), Vei2(1,0)))
+		        if (!IsCollisionLegacy(entity->GetHitBox(), Vector<int>(1,0)))
 					entity->Move({ 1,0 });
 
 		if(yMove < 0)
 		    for (int i = 0; i > yMove; i--)
-		        if (!IsCollisionLegacy(entity->GetHitBox(), Vei2(0,-1)))
+		        if (!IsCollisionLegacy(entity->GetHitBox(), Vector<int>(0,-1)))
 					entity->Move({ 0,-1 });
 
 		if(yMove > 0)
 		    for (int i = 0; i < yMove; i++)
-		        if (!IsCollisionLegacy(entity->GetHitBox(), Vei2(0,1)))
+		        if (!IsCollisionLegacy(entity->GetHitBox(), Vector<int>(0,1)))
 					entity->Move({ 0,1 });
 		        else
-		            entity->SetGrounded();
+		            entity->SetGrounded(true);
 	}
-}
+}*/
 
-bool Physics::IsCollisionLegacy(RectI hitBox, Vei2 move)
+/*bool Physics::IsCollisionLegacy(RectI hitBox, Vector<int> move)
 {
     int tileXMin, tileXMax, tileYMin, tileYMax;
 
@@ -174,4 +323,4 @@ bool Physics::IsCollisionLegacy(RectI hitBox, Vei2 move)
     }
 
     return false;
-}
+}*/

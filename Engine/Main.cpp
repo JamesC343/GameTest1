@@ -26,6 +26,12 @@ int WINAPI wWinMain( HINSTANCE hInst,HINSTANCE,LPWSTR pArgs,INT )
 {
 	try
 	{
+		AllocConsole();
+		freopen("conin$", "r", stdin);
+		freopen("conout$", "w", stdout);
+		freopen("conout$", "w", stderr);
+		printf("Debugging Window:\n");
+
 		MainWindow wnd( hInst,pArgs );		
 		try
 		{
@@ -74,6 +80,8 @@ int WINAPI wWinMain( HINSTANCE hInst,HINSTANCE,LPWSTR pArgs,INT )
 		MessageBox( nullptr,L"\n\nException caught at main window creation.",
 			L"Unhandled Non-STL Exception",MB_OK );
 	}
+
+	FreeConsole();
 
 	return 0;
 }

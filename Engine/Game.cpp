@@ -24,54 +24,70 @@
 #include "EntityY.h"
 #include "String.h"
 #include "Camera.h"
+#include <iostream>
 
 Game::Game( MainWindow& wnd ) :	wnd( wnd )
 {
 	gfx = new Graphics(wnd);
 	
 	Sprite* playerSprite = new Sprite("images/player.bmp", { 0,55,0,60 });
-	player = new Player(playerSprite, { 0 * (20), 0 * (20) }, { 55 * (20), 60 * (20) });
+	player = new Player(playerSprite, { 0 * (20), 0 * (20) }, { 55 * (20), 60 * (20) }, "Player");
 	entities.push_back(player);
 
 	Sprite* yorpSprite = new Sprite("images/yorp.bmp", { 0,29,0,42 });
-	entities.push_back(new EntityY(yorpSprite, { 400 * (20), 200 * (20) }, { 29 * (20), 42 * (20) }));
+	//entities.push_back(new EntityY(yorpSprite, { 400 * (20), 200 * (20) }, { 29 * (20), 42 * (20) }, "Yorp"));
 
-	loadTerrainMap();
-
+	const Vector<int> worldSize = { 32,24 };
+	loadTerrainMap(worldSize);
 	loadDerivedSets();
 	
-	//camera = new Camera(&wnd, gfx, player, &entities, { 0 + 320, worldSize.x * 40 - 320, 0 + 240, worldSize.y * 32 - 240 } );
 	camera = new Camera(&wnd, gfx, player, &visualObjects, { 0, worldSize.x * 40, 0, worldSize.y * 32 } );
-	camera->AddTerrainMap(terrainMap, worldSize);
+	//camera = new Camera(&wnd, gfx, player, &entities, { 0 + 320, worldSize.x * 40 - 320, 0 + 240, worldSize.y * 32 - 240 } ); //Legacy?
+	//camera->AddTerrainMap(terrainMap, worldSize); //Legacy
 
-	physics = new Physics(player, &physicalObjects);
-	physics->AddTerrainMap(terrainMap, worldSize);
+	physics = new Physics(player, &terrainObjects, &entities);
+	//physics = new Physics(player, &physicalObjects, &terrainObjects, &entities); //Legacy
+	//physics->AddTerrainMap(terrainMap, worldSize);
 
-	ft.Mark();
+	physicsTimer.Mark();
+	frameTimer.Mark();
 }
 
 void Game::Go()
 {
 	gfx->BeginFrame();
+	ComposeFrame(frameTimer.Mark());
+	gfx->EndFrame();
 
-	float deltaTime = ft.Mark();
+	float deltaTime = physicsTimer.Mark() + residualDeltaTime;
 
-	while(deltaTime > 1.0)
+	while(deltaTime > maximumTickTime)
 	{
-		UpdateModel(1.0);
-		deltaTime -= 1.0;
+		UpdateModel(maximumTickTime);
+		deltaTime -= maximumTickTime;
 	}
 
-	UpdateModel(deltaTime);
+	residualDeltaTime = deltaTime;
+	//UpdateModel(deltaTime);
 	
-	ComposeFrame();
-	gfx->EndFrame();
+	//ComposeFrame(frameTimer.Mark());
+	//gfx->EndFrame();
 }
 
 void Game::UpdateModel(const float deltaTime)
 {
+	if (wnd.kbd.KeyIsPressed( VK_RETURN ))
+	{
+		camera->ToggleDisplayFPS();
+		//std::cout << "Player Height: " << player->GetHitBox().GetCenter().y << "\n";
 
-	if( wnd.kbd.KeyIsPressed( 'A' ) )
+		/*std::string test;
+
+		printf("WTF");
+		std::cout << " - ";
+		std::cin >> test;*/
+	}
+	if (wnd.kbd.KeyIsPressed('A'))
 	{
 		player->Run(-100 * (20));
 	}
@@ -85,7 +101,7 @@ void Game::UpdateModel(const float deltaTime)
 	}
 	if( wnd.kbd.KeyIsPressed( VK_SPACE ) )
 	{
-		player->Jump(-750 * (20));
+		player->Jump(-700 * (20));
 	}
 
 	for (int i = 0; i < entities.size(); i++)
@@ -98,12 +114,12 @@ void Game::UpdateModel(const float deltaTime)
 	camera->Routine(deltaTime);
 }
 
-void Game::ComposeFrame()
+void Game::ComposeFrame(const float deltaTime)
 {
-	camera->DrawSprites();
+	camera->DrawSprites(deltaTime);
 }
 
-void Game::loadTerrainMap()
+void Game::loadTerrainMap(const Vector<int> worldSize)
 {
 	std::string map =
 		"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
@@ -125,22 +141,33 @@ void Game::loadTerrainMap()
 		"BAAAAAAAAAAAAAABBBBBBBBAAAAAAAAB"
 		"BBBAAAAAAAAAABBBBBBBBBBBAAAAABBB"
 		"BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB"
-		"BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB"
-		"BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB"
-		"BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB"
-		"BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB"
-		"BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB";
+		"CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC"
+		"CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC"
+		"CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC"
+		"CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC"
+		"CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC";
 
-	auto mapIterator = map.cbegin();
-	for (int i = 0; i < worldSize.x*worldSize.y; i++, ++mapIterator)
-		terrainMap[i] = (*mapIterator == 'B') ? 1 : 0;
+	//auto mapIterator = map.cbegin();
+	//for (int i = 0; i < worldSize.x*worldSize.y; i++, ++mapIterator)
+	//	terrainMap[i] = (*mapIterator == 'B') ? 1 : (*mapIterator == 'C') ? 2 : 0;
 
 	Sprite* thisIsAMemoryLeak = new Sprite("images/terrain2.bmp", { 0,40,0,32 });
 
 	auto mapIterator2 = map.cbegin();
+	int name = 0;
 	for (int i = 0; i < worldSize.x*worldSize.y; i++, ++mapIterator2)
-		if(*mapIterator2 == 'B')
-			terrainObjects.push_back(new TerrainObject(thisIsAMemoryLeak, Vei2{ i%worldSize.x * 40 * (20), i / worldSize.x * 32 * (20) }, Vei2{ 40 * (20), 32 * (20) }));
+	{
+		if (*mapIterator2 == 'B')
+		{
+			terrainObjects.push_back(new TerrainObject(thisIsAMemoryLeak, Vector<int>{ i%worldSize.x * 40 * (20), i / worldSize.x * 32 * (20) }, Vector<int>{ 40 * (20), 32 * (20) }, std::to_string(name)));
+			name++;
+		}
+		/*else if (*mapIterator2 == 'C')
+		{
+			visualObjects.push_back(new TerrainObject(thisIsAMemoryLeak, Vector<int>{ i%worldSize.x * 40 * (20), i / worldSize.x * 32 * (20) }, Vector<int>{ 40 * (20), 32 * (20) }, std::to_string(name)));
+			name++;
+		}*/
+	}
 }
 
 void Game::loadDerivedSets()
@@ -149,7 +176,7 @@ void Game::loadDerivedSets()
 
 	for (int i = 0; i < entities.size(); i++)
 	{
-		loadObject = dynamic_cast<PhysicalObject*> (entities.at(i));
+		loadObject = entities.at(i);
 
 		if (loadObject != NULL)
 		{
@@ -162,10 +189,12 @@ void Game::loadDerivedSets()
 
 	for (int i = 0; i < terrainObjects.size(); i++)
 	{
-		loadObject = dynamic_cast<PhysicalObject*> (terrainObjects.at(i));
+		loadObject = terrainObjects.at(i);
 
 		if (loadObject != NULL)
+		{
 			physicalObjects.push_back(loadObject);
-			//visualObjects.push_back(loadObject);
+			visualObjects.push_back(loadObject);
+		}
 	}
 }

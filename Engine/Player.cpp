@@ -1,9 +1,9 @@
 #include "MainWindow.h"
 #include "Player.h"
+#include <iostream>
 
-Player::Player(Sprite* sprite, Vei2 position, Vei2 size)
-	: PhysicalObject(sprite, position, size, true)
-	, Entity()
+Player::Player(Sprite* sprite, Vector<int> position, Vector<int> size, std::string name)
+	: Entity(sprite, position, size, name)
 {
     //ctor
 }
@@ -20,22 +20,17 @@ void Player::Routine(float deltaTime)
 
 void Player::Run(int xRun)
 {
-    int runMax = 300 * (20);
+	int runMax = 300 * (20);
+	int run = isGrounded ? xRun : xRun / 10;
 
-    if(isGrounded)
-    {
-		velocityVector.x += xRun;
-        if (velocityVector.x < -runMax)
-			velocityVector.x = -runMax;
-        if (velocityVector.x > runMax)
-			velocityVector.x = runMax;
-    }
+	addVelocity({ (GetVelocityVector().x + run > runMax) ? runMax - GetVelocityVector().x
+		: (GetVelocityVector().x + run < -runMax) ? -runMax - GetVelocityVector().x : run, 0 });
 }
 
 void Player::Jump(int yJump)
 {
-    if(isGrounded)
-		velocityVector.y += yJump;
+	if (isGrounded)
+		addVelocity({ 0, yJump });
 
     isGrounded = false;
 }
