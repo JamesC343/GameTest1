@@ -14,14 +14,12 @@ class Camera// : public Entity
         virtual ~Camera();
         void Routine(const float);
         void DrawSprites(const float);
-		//void AddTerrainMap(int*,Vector<int>); //Legacy
 		void ToggleDisplayFPS();
 
     protected:
 
     private:
 		void DrawEntities();
-		//void DrawTerrain(); //Legacy
 		
         void Move(float);
         void SetPosition(Vector<int> newPosition);
@@ -47,9 +45,6 @@ class Camera// : public Entity
 		Vector<int> cameraSize;
 		Vector<int> cameraPos;
 		RectI boundary;
-
-		//int* terrainMap; //Legacy
-		//Vector<int> worldSize; //Legacy
 };
 
 #endif // CAMERA_H

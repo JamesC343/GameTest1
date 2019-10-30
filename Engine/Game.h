@@ -68,7 +68,4 @@ class Game
 		//Derived Sets
 		std::vector<PhysicalObject*> physicalObjects;//For Physics
 		std::vector<PhysicalObject*> visualObjects;//For Camera
-	
-		//const Vector<int> worldSize = { 32,24 }; //Legacy //Not Needed
-		//int terrainMap[32*24]; //Legacy
 };

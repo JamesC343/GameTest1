@@ -29,19 +29,6 @@ void Camera::Routine(float deltaTime)
 	Move(deltaTime);
 
 	ticksPerSecond = (int)(1.0 / deltaTime);
-
-	//if(displayFramesPerSecond)
-	//	std::cout << "Frames Per Second: " << 1 / deltaTime << "\n";
-	
-	/*deltaTimeCount += deltaTime;
-	framesAccumulated++;
-
-	if (deltaTimeCount > 1)
-	{
-		deltaTimeCount -= 1;
-		framesPerSecond = framesAccumulated;
-		framesAccumulated = 0;
-	}*/
 }
 
 void Camera::DrawSprites(const float deltaTime)
@@ -50,7 +37,6 @@ void Camera::DrawSprites(const float deltaTime)
 	//gfx->DrawSpriteNonChroma(0 - GetTopLeft().x, 608 - GetTopLeft().y, foregroundSprite->GetRect(), gfx->GetScreenRect(), *foregroundSprite);
 
 	DrawEntities();
-	//DrawTerrain(); //legacy?
 
 	gfx->DrawSprite(wnd->mouse.GetPosX() - 16, wnd->mouse.GetPosY() - 24, *cursor, gfx->GetScreenRect());
 
@@ -76,19 +62,6 @@ void Camera::DrawEntities()
 			, gfx->GetScreenRect());
 	}
 }
-
-//void Camera::DrawTerrain()	//Legacy
-//{
-//for (int i = 0; i < worldSize.x*worldSize.y; i++)
-//		if (terrainMap[i] == 2)
-//			gfx->DrawSpriteNonChroma(i%worldSize.x * 40 - GetTopLeft().x, i/worldSize.x * 32 - GetTopLeft().y, *terrainSprite);
-//}
-
-//void Camera::AddTerrainMap(int* newMap, Vector<int> mapSize) //Legacy
-//{
-//	terrainMap = newMap;
-//	worldSize = mapSize;
-//}
 
 void Camera::ToggleDisplayFPS()
 {

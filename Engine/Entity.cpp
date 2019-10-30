@@ -77,7 +77,7 @@ void Entity::ApplyGravityAndFriction(float deltaTime)
 		velocityVector.x = 0;
 }
 
-void Entity::addVelocity(Vector<int> velocity)//Vector velocity)
+void Entity::addVelocity(Vector<int> velocity)
 {
 	velocityVector += velocity;
 }

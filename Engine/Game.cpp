@@ -42,12 +42,8 @@ Game::Game( MainWindow& wnd ) :	wnd( wnd )
 	loadDerivedSets();
 	
 	camera = new Camera(&wnd, gfx, player, &visualObjects, { 0, worldSize.x * 40, 0, worldSize.y * 32 } );
-	//camera = new Camera(&wnd, gfx, player, &entities, { 0 + 320, worldSize.x * 40 - 320, 0 + 240, worldSize.y * 32 - 240 } ); //Legacy?
-	//camera->AddTerrainMap(terrainMap, worldSize); //Legacy
 
 	physics = new Physics(player, &terrainObjects, &entities);
-	//physics = new Physics(player, &physicalObjects, &terrainObjects, &entities); //Legacy
-	//physics->AddTerrainMap(terrainMap, worldSize);
 
 	physicsTimer.Mark();
 	frameTimer.Mark();
@@ -56,8 +52,6 @@ Game::Game( MainWindow& wnd ) :	wnd( wnd )
 void Game::Go()
 {
 	gfx->BeginFrame();
-	ComposeFrame(frameTimer.Mark());
-	gfx->EndFrame();
 
 	float deltaTime = physicsTimer.Mark() + residualDeltaTime;
 
@@ -68,10 +62,9 @@ void Game::Go()
 	}
 
 	residualDeltaTime = deltaTime;
-	//UpdateModel(deltaTime);
 	
-	//ComposeFrame(frameTimer.Mark());
-	//gfx->EndFrame();
+	ComposeFrame(frameTimer.Mark());
+	gfx->EndFrame();
 }
 
 void Game::UpdateModel(const float deltaTime)
@@ -146,10 +139,6 @@ void Game::loadTerrainMap(const Vector<int> worldSize)
 		"CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC"
 		"CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC"
 		"CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC";
-
-	//auto mapIterator = map.cbegin();
-	//for (int i = 0; i < worldSize.x*worldSize.y; i++, ++mapIterator)
-	//	terrainMap[i] = (*mapIterator == 'B') ? 1 : (*mapIterator == 'C') ? 2 : 0;
 
 	Sprite* thisIsAMemoryLeak = new Sprite("images/terrain2.bmp", { 0,40,0,32 });
 

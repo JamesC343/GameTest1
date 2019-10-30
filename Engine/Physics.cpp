@@ -1,7 +1,7 @@
 #include "Physics.h"
 
-Physics::Physics(Player* target/*, std::vector<PhysicalObject*>* physicalObjects//Legacy */, std::vector<TerrainObject*>* terrainObjects, std::vector<Entity*>* entities)
-	: target (target)/*, physicalObjects(physicalObjects)//Legacy */, terrainObjects(terrainObjects), entities(entities)
+Physics::Physics(Player* target, std::vector<TerrainObject*>* terrainObjects, std::vector<Entity*>* entities)
+	: target (target), terrainObjects(terrainObjects), entities(entities)
 {
     //ctor
 }
@@ -56,15 +56,7 @@ void Physics::Routine(float deltaTime)//Isn't it funny how an x collision causes
 				entity->Move(deltaTime - elapsedDeltaTime), elapsedDeltaTime = deltaTime;
 		}
 	}
-
-	//MoveEntitiesLegacy(deltaTime);
 }
-
-/*void Physics::AddTerrainMap(int* newMap, Vector<int> mapSize)
-{
-	terrainMap = newMap;
-	worldSize = mapSize;
-}*/
 
 void Physics::Debug()
 {
@@ -261,66 +253,4 @@ bool Physics::IsCollision(Vector<int> point, RectI hitBox)
 	}
 
 	return collisions;
-}*/
-
-/*void Physics::MoveEntitiesLegacy(float deltaTime)
-{
-	for(int j = 0; j < entities->size(); j++)
-	{
-		PhysicalObject* entity = entities->at(j);
-		RectI hitBox = entity->GetHitBox();
-
-		Vector velocityVector = entity->GetVelocityVector();
-
-		int xMove = velocityVector.x * deltaTime;
-		int yMove = velocityVector.y * deltaTime;
-
-		if(xMove < 0)
-		    for (int i = 0; i > xMove; i--)
-		        if (!IsCollisionLegacy(entity->GetHitBox(), Vector<int>(-1,0)))
-					entity->Move({ -1, 0 });
-
-		if(xMove > 0)
-		    for (int i = 0; i < xMove; i++)
-		        if (!IsCollisionLegacy(entity->GetHitBox(), Vector<int>(1,0)))
-					entity->Move({ 1,0 });
-
-		if(yMove < 0)
-		    for (int i = 0; i > yMove; i--)
-		        if (!IsCollisionLegacy(entity->GetHitBox(), Vector<int>(0,-1)))
-					entity->Move({ 0,-1 });
-
-		if(yMove > 0)
-		    for (int i = 0; i < yMove; i++)
-		        if (!IsCollisionLegacy(entity->GetHitBox(), Vector<int>(0,1)))
-					entity->Move({ 0,1 });
-		        else
-		            entity->SetGrounded(true);
-	}
-}*/
-
-/*bool Physics::IsCollisionLegacy(RectI hitBox, Vector<int> move)
-{
-    int tileXMin, tileXMax, tileYMin, tileYMax;
-
-	int xMin = hitBox.left / (20) + move.x;
-    int xMax = hitBox.right / (20) + move.x;
-	int yMin = hitBox.top / (20) + move.y;
-    int yMax = hitBox.bottom / (20) + move.y;
-
-    for (int i = 0; i < worldSize.x*worldSize.y; i++)
-    {
-        if (terrainMap[i] == 1)
-        {
-            tileXMin = i%worldSize.x * 40;
-            tileXMax = (i%worldSize.x + 1) * 40 - 1;
-            tileYMin = i/worldSize.x * 32;
-            tileYMax = (i/worldSize.x + 1) * 32 - 1;
-
-            if (xMax >= tileXMin && xMin <= tileXMax && yMax >= tileYMin && yMin <= tileYMax)
-                return true;
-        }
-    }
-
-    return false;
 }*/
