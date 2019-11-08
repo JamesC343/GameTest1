@@ -54,7 +54,7 @@ class Game
 
 		float deltaTime = 0;
 		float residualDeltaTime = 0;
-		const float maximumTickTime = (1.0 / 60.0);//Would be best to keep this close to a value of a realistic FPS, otherwise it looks funny due to the character moving before the frame has been drawn
+		const float maximumTickTime = (1.0 / 100.0);//Would be best to keep this close to a value of a realistic FPS, otherwise it looks funny due to the character moving before the frame has been drawn
 													//In an ideal world my physics would handle 'forces' such as gravity more dynamically so that I don't get strange behaviour from a non static tick time
 													//The question is.. How do I increase the FPS??
 

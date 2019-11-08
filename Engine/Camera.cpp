@@ -33,8 +33,8 @@ void Camera::Routine(float deltaTime)
 
 void Camera::DrawSprites(const float deltaTime)
 {
-	//gfx->DrawSpriteNonChroma(0, 0, *backgroundSprite);
-	//gfx->DrawSpriteNonChroma(0 - GetTopLeft().x, 608 - GetTopLeft().y, foregroundSprite->GetRect(), gfx->GetScreenRect(), *foregroundSprite);
+	gfx->DrawSpriteNonChroma(0, 0, *backgroundSprite);
+	gfx->DrawSpriteNonChroma(0 - GetTopLeft().x, 608 - GetTopLeft().y, foregroundSprite->GetRect(), gfx->GetScreenRect(), *foregroundSprite);
 
 	DrawEntities();
 
