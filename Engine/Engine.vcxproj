@@ -159,6 +159,7 @@
     <ClInclude Include="Mouse.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="Terrain.h" />
+    <ClInclude Include="TerrainMap.h" />
     <ClInclude Include="TerrainObject.h" />
     <ClInclude Include="Vector.h" />
   </ItemGroup>
@@ -188,6 +189,7 @@
       <BasicRuntimeChecks Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Default</BasicRuntimeChecks>
     </ClCompile>
     <ClCompile Include="Terrain.cpp" />
+    <ClCompile Include="TerrainMap.cpp" />
     <ClCompile Include="TerrainObject.cpp" />
   </ItemGroup>
   <ItemGroup>

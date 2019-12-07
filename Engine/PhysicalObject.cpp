@@ -5,9 +5,6 @@
 PhysicalObject::PhysicalObject(Sprite* sprite, Vector<int> position, Vector<int> size, std::string name)
 		: sprite(sprite), hitBox (position, size.x - 1, size.y - 1), name(name)
 {
-	assert(hitBox.GetWidth() % 2 == 0);
-	assert(hitBox.GetHeight() % 2 == 0);
-
 	closeProximityZoneRadius = hitBox.GetMinRadius();
 }
 
@@ -27,7 +24,7 @@ const std::string PhysicalObject::GetName()
 
 void PhysicalObject::Move(Vector<int> move)
 {
-    hitBox.move(move);
+	hitBox.Move(move);
 }
 
 Sprite PhysicalObject::GetSprite()

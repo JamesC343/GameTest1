@@ -37,6 +37,7 @@ class Camera// : public Entity
 		
 		Font font = "images/Fixedsys16x28.bmp";
 		Surface* FPSBackGround;
+		Surface* testSprite;////////////////
 		Surface* backgroundSprite;
 		Surface* foregroundSprite;
 		Surface* terrainSprite;

@@ -21,7 +21,7 @@ RectI::RectI( const Vector<int>& topLeft,int width,int height )
 {
 }
 
-void RectI::move(Vector<int> move)
+void RectI::Move(Vector<int> move)
 {
 	left += move.x;
 	right += move.x;
@@ -60,6 +60,11 @@ RectI RectI::GetExpanded( int offset ) const
 Vector<int> RectI::GetCenter() const
 {
 	return Vector<int>( (left + right) / 2,(top + bottom) / 2 );
+}
+
+Vector<int> RectI::GetBottomCenter() const
+{
+	return Vector<int>((left + right) / 2, bottom);
 }
 
 Vector<int> RectI::getTopLeft()

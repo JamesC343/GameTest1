@@ -5,7 +5,9 @@
 #include <iostream>
 #include "Player.h"
 #include "TerrainObject.h"
+#include "RectI.h"
 #include "Vector.h"
+#include "TerrainMap.h"
 
 /*struct PhysicalObjectPair
 {
@@ -23,23 +25,26 @@ struct terrainCollision
 class Physics
 {
     public:
-        Physics(Player*, std::vector<TerrainObject*>*, std::vector<Entity*>*);
+        Physics(Player*, TerrainMap*, std::vector<TerrainObject*>*, std::vector<Entity*>*);
         virtual ~Physics();
 		void Routine(float);
+		void RoutineLegacy(float);
 		void Debug();
 
     protected:
 
     private:
 		std::vector<Entity*> GetMovingEntities();
+
 		std::vector<TerrainObject*> GetProximateTerrain(Entity*, float);
 		terrainCollision GetNextTerrainCollision(Entity*, std::vector<TerrainObject*>, float);
 
 		bool IsCollision(Vector<int>, RectI);
-		//std::vector<PhysicalObjectPair> GetProximatePairs(std::vector<PhysicalObject*>, float);
-		//std::vector<Collision> GetCollisionPairs(std::vector<PhysicalObjectPair>);
+		//std::vector<PhysicalObjectPair> GetProximatePairs(std::vector<PhysicalObject*>, float);//Unused for now
+		//std::vector<Collision> GetCollisionPairs(std::vector<PhysicalObjectPair>);//Unused for now
 
 		Player* target;
+		TerrainMap* terrainMap;
 		std::vector<TerrainObject*>* terrainObjects;
 		std::vector<Entity*>* entities;
 

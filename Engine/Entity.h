@@ -16,6 +16,9 @@ public:
 	Vector<int> GetVelocityVector();
 	bool GetIsGrounded();
 	bool IsMoving();
+	RectI GetHitBox();
+	RectI GetHitBox(float);
+	RectI GetHitBox(Vector<int>);
 
 protected:
 	void ApplyGravityAndFriction(float);

@@ -20,8 +20,8 @@ void Player::Routine(float deltaTime)
 
 void Player::Run(int xRun)
 {
-	int runMax = 300 * (20);
-	int run = isGrounded ? xRun : xRun / 10;
+	int runMax = 500;
+	int run = isGrounded ? xRun : xRun / 5;
 
 	addVelocity({ (GetVelocityVector().x + run > runMax) ? runMax - GetVelocityVector().x
 		: (GetVelocityVector().x + run < -runMax) ? -runMax - GetVelocityVector().x : run, 0 });

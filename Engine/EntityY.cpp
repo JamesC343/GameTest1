@@ -31,13 +31,13 @@ void EntityY::DecisionMaking()
 	switch (decision)
 	{
 	case 0://Jump once or twice
-		Jump(-200 * (randomNumber % 3 + 1) * (20));
+		Jump(-200 * (randomNumber % 3 + 1));
 	
 	case 1://Walk towards player
 		return;
 	
 	case 2://Walk random direction
-		Run(randomNumber * ((randomNumber % 3) - 1) * 100 * (20));
+		Run(randomNumber * ((randomNumber % 3) - 1) * 100);
 	
 	default://Wait for a few seconds
 		return;
@@ -46,7 +46,7 @@ void EntityY::DecisionMaking()
 
 void EntityY::Run(int xRun)
 {
-	int runMax = 150 * (20);
+	int runMax = 150;
 	int run = isGrounded ? xRun : xRun / 5;
 
 	addVelocity({ (GetVelocityVector().x + run > runMax) ? runMax - GetVelocityVector().x

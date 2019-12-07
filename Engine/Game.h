@@ -30,6 +30,7 @@
 #include "Physics.h"
 #include "Camera.h"
 #include "FrameTimer.h"
+#include "TerrainMap.h"
 
 class Game
 {
@@ -42,7 +43,8 @@ class Game
 	private:
 		void ComposeFrame(const float);
 		void UpdateModel(const float);
-		void loadTerrainMap(const Vector<int>);
+		//void loadTerrainMatrix(const Surface*);
+		void loadTerrainMapLegacy(const Vector<int>);
 		void loadDerivedSets();
 	
 	private:
@@ -60,6 +62,8 @@ class Game
 
 		Camera* camera;
 		Player* player;
+		//std::vector<std::vector<bool>> terrainMatrix;
+		TerrainMap* terrainMap;
 		
 		//Primary Sets
 		std::vector<Entity*> entities;

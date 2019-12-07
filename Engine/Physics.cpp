@@ -1,7 +1,7 @@
 #include "Physics.h"
 
-Physics::Physics(Player* target, std::vector<TerrainObject*>* terrainObjects, std::vector<Entity*>* entities)
-	: target (target), terrainObjects(terrainObjects), entities(entities)
+Physics::Physics(Player* target, TerrainMap* terrainMap, std::vector<TerrainObject*>* terrainObjects, std::vector<Entity*>* entities)
+	: target (target), terrainMap(terrainMap), terrainObjects(terrainObjects), entities(entities)
 {
     //ctor
 }
@@ -11,7 +11,69 @@ Physics::~Physics()
     //dtor
 }
 
-void Physics::Routine(float deltaTime)//Isn't it funny how an x collision causes y distance to be reduced? This applies to both jumping up and also falling back down
+void Physics::Routine(float deltaTime)
+{
+	std::vector<Entity*> movingEntities = GetMovingEntities();
+
+	for (int i = 0; i < movingEntities.size(); i++)
+	{
+		Entity* entity = movingEntities.at(i);
+
+		Vector<int> currentPosition = entity->GetHitBox().GetBottomCenter();
+		Vector<int> newPosition = entity->GetHitBox(deltaTime).GetBottomCenter();
+
+		if (movingEntities.at(i)->GetIsGrounded())//WalkingPhysics
+		{
+			Vector<int> targetPosition = { newPosition.x, terrainMap->GetWalkTarget(newPosition) };
+			float newPositionLength = (newPosition - currentPosition).GetLength();
+			float targetPositionLength = (targetPosition - currentPosition).GetLength();
+
+			Vector<int> move = targetPosition - currentPosition;
+
+			int i = 0;
+			while (targetPositionLength > newPositionLength && i++ < 2)
+			{
+				move = (Vector<float>)move * newPositionLength / targetPositionLength;
+
+				newPosition = entity->GetHitBox(move).GetBottomCenter();
+
+				targetPosition = { newPosition.x, terrainMap->GetWalkTarget(newPosition) };
+				targetPositionLength = (targetPosition - currentPosition).GetLength();
+
+				move = targetPosition - currentPosition;
+
+				assert(i < 3);
+			}
+
+			entity->Move(move);
+
+			if (!terrainMap->IsCollision({ entity->GetHitBox().GetBottomCenter() + Vector<int>{ 0, 1 } }))
+			{
+				entity->SetGrounded(false);
+				std::cout << "SetGrounded(false)" << "\n";
+			}
+		}
+
+		else//TrajectoryPhysics
+		{
+			if (terrainMap->IsCollision(newPosition))
+			{//This is shit, change it. But it works... wtf
+				int deltaTimeHundredth = 0;
+				newPosition = entity->GetHitBox().GetBottomCenter();
+
+				while(deltaTimeHundredth < 100 && !terrainMap->IsCollision(newPosition))
+					newPosition = entity->GetHitBox(deltaTime / 100 * ++deltaTimeHundredth).GetBottomCenter();
+
+				entity->Move(deltaTime / 100 * --deltaTimeHundredth);
+				entity->SetGrounded(true);
+			}
+			else
+				entity->Move(deltaTime);
+		}
+	}
+}
+
+void Physics::RoutineLegacy(float deltaTime)//Isn't it funny how an x collision causes y distance to be reduced? This applies to both jumping up and also falling back down
 {
 	std::vector<Entity*> movingEntities = GetMovingEntities();
 	
