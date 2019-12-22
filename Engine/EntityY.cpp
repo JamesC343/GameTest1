@@ -49,14 +49,14 @@ void EntityY::Run(int xRun)
 	int runMax = 150;
 	int run = isGrounded ? xRun : xRun / 5;
 
-	addVelocity({ (GetVelocityVector().x + run > runMax) ? runMax - GetVelocityVector().x
-		: (GetVelocityVector().x + run < -runMax) ? -runMax - GetVelocityVector().x : run, 0 });
+	AddForce({ (GetForceVector().x + run > runMax) ? runMax - GetForceVector().x
+		: (GetForceVector().x + run < -runMax) ? -runMax - GetForceVector().x : run, 0 });
 }
 
 void EntityY::Jump(int yJump)
 {
     if(isGrounded)
-		addVelocity({ 0, yJump });
+		AddForce({ 0, yJump });
 
     isGrounded = false;
 }

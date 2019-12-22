@@ -24,34 +24,13 @@ void Physics::Routine(float deltaTime)
 
 		if (movingEntities.at(i)->GetIsGrounded())//WalkingPhysics
 		{
-			Vector<int> targetPosition = { newPosition.x, terrainMap->GetWalkTarget(newPosition) };
-			float newPositionLength = (newPosition - currentPosition).GetLength();
-			float targetPositionLength = (targetPosition - currentPosition).GetLength();
+			entity->Move(GetWalkTarget(entity, deltaTime));
 
-			Vector<int> move = targetPosition - currentPosition;
-
-			int i = 0;
-			while (targetPositionLength > newPositionLength && i++ < 2)
-			{
-				move = (Vector<float>)move * newPositionLength / targetPositionLength;
-
-				newPosition = entity->GetHitBox(move).GetBottomCenter();
-
-				targetPosition = { newPosition.x, terrainMap->GetWalkTarget(newPosition) };
-				targetPositionLength = (targetPosition - currentPosition).GetLength();
-
-				move = targetPosition - currentPosition;
-
-				assert(i < 3);
-			}
-
-			entity->Move(move);
-
-			if (!terrainMap->IsCollision({ entity->GetHitBox().GetBottomCenter() + Vector<int>{ 0, 1 } }))
-			{
-				entity->SetGrounded(false);
-				std::cout << "SetGrounded(false)" << "\n";
-			}
+			//if (!terrainMap->IsCollision({ entity->GetHitBox().GetBottomCenter() + Vector<int>{ 0, 1 } }))
+			//{
+			//	entity->SetGrounded(false);
+			//	std::cout << "SetGrounded(false)" << "\n";
+			//}
 		}
 
 		else//TrajectoryPhysics
@@ -66,6 +45,7 @@ void Physics::Routine(float deltaTime)
 
 				entity->Move(deltaTime / 100 * --deltaTimeHundredth);
 				entity->SetGrounded(true);
+				std::cout << "Collision" << "\n";
 			}
 			else
 				entity->Move(deltaTime);
@@ -134,6 +114,27 @@ std::vector<Entity*> Physics::GetMovingEntities()
 			movingEntities.push_back(entities->at(i));
 
 	return movingEntities;
+}
+
+Vector<int> Physics::GetWalkTarget(Entity* entity, float deltaTime)
+{
+	Vector<int> currentPosition = entity->GetHitBox().GetBottomCenter();
+	int xLength = entity->GetVelocityVector().x * deltaTime;
+	int xDirection = xLength > 0 ? 1 : -1;
+
+	int distanceSq = entity->GetVelocityVector().GetLengthSq() * deltaTime;
+
+	int x, y;
+	for (int i = abs(xLength); i >= 0; i--)
+	{
+		x = i * xDirection;
+		y = terrainMap->GetYMove({ currentPosition.x + x, currentPosition.y });
+
+		if (distanceSq >= (Vector<int>({ x, y })).GetLengthSq())
+			return { x, y };
+	}
+
+	return { 0, 0 };
 }
 
 std::vector<TerrainObject*> Physics::GetProximateTerrain(Entity* entity, float deltaTime)

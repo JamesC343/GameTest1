@@ -59,8 +59,8 @@ void Camera::DrawEntities()
 	{
 		PhysicalObject* visualObject = visualObjects->at(i);
 		gfx->DrawSprite(
-			visualObject->GetHitBox().left - GetTopLeft().x
-			, visualObject->GetHitBox().top - GetTopLeft().y
+			visualObject->GetHitBox().left / (10) - GetTopLeft().x
+			, visualObject->GetHitBox().top / (10) - GetTopLeft().y
 			, visualObject->GetSprite()
 			, gfx->GetScreenRect());
 
@@ -86,7 +86,7 @@ void Camera::Move(float deltaTime)
 
 	Vector<int> cursorPosition(wnd->mouse.GetPosX() - cameraSize.x / 2, wnd->mouse.GetPosY() - cameraSize.y / 2);
 	
-	Vector<int> targetPosition = target->GetHitBox().GetCenter() + cursorPosition;
+	Vector<int> targetPosition = target->GetHitBox().GetCenter() / (10) + cursorPosition;
 
 	SetPosition((cameraPos * 3 + targetPosition) / 4);//Camera Smoothing
 }

@@ -5,6 +5,7 @@
 Entity::Entity(Sprite* sprite, Vector<int> position, Vector<int> size, std::string name)
 	: PhysicalObject(sprite, position, size, name)
 {
+	forceVector = { 0,0 };
 	velocityVector = { 0,0 };
 }
 
@@ -41,6 +42,11 @@ void Entity::SetGrounded(bool newValue)
 	isGrounded = newValue;
 }
 
+Vector<int> Entity::GetForceVector()
+{
+	return forceVector;
+}
+
 Vector<int> Entity::GetVelocityVector()
 {
 	return velocityVector;
@@ -53,7 +59,7 @@ bool Entity::GetIsGrounded()
 
 bool Entity::IsMoving()
 {
-	return velocityVector.x != 0 || velocityVector.y != 0;
+	return forceVector.x != 0 || forceVector.y != 0 || velocityVector.x != 0 || velocityVector.y != 0;
 }
 
 RectI Entity::GetHitBox()
@@ -82,29 +88,38 @@ RectI Entity::GetHitBox(Vector<int> move)
 
 void Entity::ApplyGravityAndFriction(float deltaTime)
 {
-	int frictionFactor = 100 * deltaTime;
+	//Temp workaround
+	velocityVector = forceVector;
+	//
+
+	int frictionFactor = 100 * deltaTime * (10);
 
 	if (isGrounded)
-		frictionFactor = 750 * deltaTime;
+		frictionFactor = 750 * deltaTime * (10);
 
 	//Gravity
 	if (isGrounded)
-		velocityVector.y = (int)(5000.0 * deltaTime);	//This keeps the player grounded when running down slopes but can still fall if the slope is too steep
+		forceVector.y = (int)(5000.0 * deltaTime * (10));	//This keeps the player grounded when running down slopes but can still fall if the slope is too steep
 														//Realistically this value is too high but if set to a normal value then the fall collision causes jittering
 														//The solution will be to implement fall collisions that set the y value relative to slope instead of just setting y = 0
 	else
-		velocityVector.y += (int)(2500.0 * deltaTime);
+		forceVector.y += (int)(2500.0 * deltaTime * (10));
 
 	//Friction
-	if (velocityVector.x > frictionFactor)
-		velocityVector.x -= frictionFactor;
-	else if (velocityVector.x < -frictionFactor)
-		velocityVector.x += frictionFactor;
+	if (forceVector.x > frictionFactor)
+		forceVector.x -= frictionFactor;
+	else if (forceVector.x < -frictionFactor)
+		forceVector.x += frictionFactor;
 	else
-		velocityVector.x = 0;
+		forceVector.x = 0;
 }
 
-void Entity::addVelocity(Vector<int> velocity)
+void Entity::AddForce(Vector<int> force)
+{
+	forceVector += force;
+}
+
+void Entity::AddVelocity(Vector<int> velocity)
 {
 	velocityVector += velocity;
 }

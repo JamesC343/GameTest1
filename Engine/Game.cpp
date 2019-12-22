@@ -31,11 +31,11 @@ Game::Game( MainWindow& wnd ) :	wnd( wnd )
 	gfx = new Graphics(wnd);
 	
 	Sprite* playerSprite = new Sprite("images/player.bmp", { 0,55,0,60 });
-	player = new Player(playerSprite, { 0, 0 }, { 55, 60 }, "Player");
+	player = new Player(playerSprite, { 0 * (10), 0 * (10) }, { 55 * (10), 60 * (10) }, "Player");
 	entities.push_back(player);
 
 	Sprite* yorpSprite = new Sprite("images/yorp.bmp", { 0,29,0,42 });
-	//entities.push_back(new EntityY(yorpSprite, { 400, 200 }, { 29, 42 }, "Yorp"));
+	//entities.push_back(new EntityY(yorpSprite, { 400 * (10), 200 * (10) }, { 29 * (10), 42 * (10) }, "Yorp"));
 
 	Surface* terrainSurface = new Surface("images/terrain.bmp");
 	terrainMap = new TerrainMap(terrainSurface);
@@ -86,11 +86,11 @@ void Game::UpdateModel(const float deltaTime)
 	}
 	if (wnd.kbd.KeyIsPressed('A'))
 	{
-		player->Run(-25);
+		player->Run(-25 * (10));
 	}
 	if (wnd.kbd.KeyIsPressed('D'))
 	{
-		player->Run(25);
+		player->Run(25 * (10));
 	}
 	if (wnd.kbd.KeyIsPressed('P'))
 	{
@@ -98,7 +98,7 @@ void Game::UpdateModel(const float deltaTime)
 	}
 	if( wnd.kbd.KeyIsPressed( VK_SPACE ) )
 	{
-		player->Jump(-850);
+		player->Jump(-850 * (10));
 	}
 
 	for (int i = 0; i < entities.size(); i++)

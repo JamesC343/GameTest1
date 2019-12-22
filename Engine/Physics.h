@@ -35,6 +35,7 @@ class Physics
 
     private:
 		std::vector<Entity*> GetMovingEntities();
+		Vector<int> GetWalkTarget(Entity*, float);
 
 		std::vector<TerrainObject*> GetProximateTerrain(Entity*, float);
 		terrainCollision GetNextTerrainCollision(Entity*, std::vector<TerrainObject*>, float);

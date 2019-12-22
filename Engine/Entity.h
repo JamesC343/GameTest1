@@ -13,6 +13,7 @@ public:
 	void SetYCollision();
 	void SetGrounded(bool);
 
+	Vector<int> GetForceVector();
 	Vector<int> GetVelocityVector();
 	bool GetIsGrounded();
 	bool IsMoving();
@@ -22,10 +23,12 @@ public:
 
 protected:
 	void ApplyGravityAndFriction(float);
-	void addVelocity(Vector<int>);
+	void AddForce(Vector<int>);
+	void AddVelocity(Vector<int>);
 
 	bool isGrounded = false;
 private:
+	Vector<int> forceVector = { 0,0 };
 	Vector<int> velocityVector = { 0,0 };
 };
 
