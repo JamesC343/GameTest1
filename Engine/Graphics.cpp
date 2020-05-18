@@ -414,9 +414,9 @@ void Graphics::DrawSprite(int x, int y, RectI srcRect, const RectI & clip, const
 	}
 }
 
-void Graphics::DrawSprite(int x, int y, Sprite& sprite, const RectI & clip, Color chroma)
+void Graphics::DrawSprite(int x, int y, Sprite* sprite, const RectI & clip, Color chroma)
 {
-	DrawSprite(x, y, sprite.getRect(), clip, sprite.getSurface());
+	DrawSprite(x, y, sprite->getRect(), clip, sprite->getSurface());
 }
 
 void Graphics::DrawSprite(int x, int y, RectI mapGlyphRect, Surface fontSheet)

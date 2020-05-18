@@ -86,24 +86,29 @@ RectI Entity::GetHitBox(Vector<int> move)
 	return newPosition;
 }
 
+int Entity::GetWeight()
+{
+	return weight;
+}
+
 void Entity::ApplyGravityAndFriction(float deltaTime)
 {
 	//Temp workaround
 	velocityVector = forceVector;
 	//
 
-	int frictionFactor = 100 * deltaTime * (10);
+	int frictionFactor = 100 * deltaTime;
 
 	if (isGrounded)
-		frictionFactor = 750 * deltaTime * (10);
+		frictionFactor = 750 * deltaTime;
 
 	//Gravity
 	if (isGrounded)
-		forceVector.y = (int)(5000.0 * deltaTime * (10));	//This keeps the player grounded when running down slopes but can still fall if the slope is too steep
+		forceVector.y = (int)(5000.0 * deltaTime);	//This keeps the player grounded when running down slopes but can still fall if the slope is too steep
 														//Realistically this value is too high but if set to a normal value then the fall collision causes jittering
 														//The solution will be to implement fall collisions that set the y value relative to slope instead of just setting y = 0
 	else
-		forceVector.y += (int)(2500.0 * deltaTime * (10));
+		forceVector.y += (int)(2500.0 * deltaTime);
 
 	//Friction
 	if (forceVector.x > frictionFactor)

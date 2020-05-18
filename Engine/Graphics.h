@@ -65,7 +65,7 @@ public:
 	void DrawSpriteNonChroma(int x, int y, const RectI& srcRect, const Surface& s);
 	void DrawSpriteNonChroma(int x, int y, RectI srcRect, const RectI& clip, const Surface& s);
 	void DrawSprite(int x, int y, RectI srcRect, const RectI& clip, const Surface& s, Color chroma = Colors::Magenta);
-	void DrawSprite(int x, int y, Sprite& sprite, const RectI& clip, Color chroma = Colors::Magenta);
+	void DrawSprite(int x, int y, Sprite* sprite, const RectI& clip, Color chroma = Colors::Magenta);
 	void DrawSprite(int x, int y, RectI mapGlyphRect, Surface fontSheet);
 	void DrawSpriteSubstitute(int x, int y, Color substitute, const Surface& s, Color chroma = Colors::Magenta);
 	void DrawSpriteSubstitute(int x, int y, Color substitute, const RectI& srcRect, const Surface& s, Color chroma = Colors::Magenta);

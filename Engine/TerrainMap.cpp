@@ -3,20 +3,19 @@
 
 
 TerrainMap::TerrainMap(const Surface* terrainFile)
-	: width(terrainFile->GetWidth() * (10)), height(terrainFile->GetHeight() * (10))
+	: terrainSurface(terrainFile), size({ terrainFile->GetWidth(), terrainFile->GetHeight() })
 {
-	terrainMatrix = new int[width];
-	int minY;
+	minY = new int[size.x];
+	int tempY;
 
 	for (int x = 0; x < terrainFile->GetWidth(); x++)
 	{
-		minY = 0;
-		for (int y = 0; y < terrainFile->GetHeight() && minY == 0; y++)
+		tempY = 0;
+		for (int y = 0; y < terrainFile->GetHeight() && tempY == 0; y++)
 			if (terrainFile->GetPixel(x, y) != Colors::Magenta)
-				minY = y * (10);
+				tempY = y;
 
-		for (int a = 0; a < 10; a++)
-			terrainMatrix[x * (10) + a] = minY;
+		minY[x] = tempY;
 	}
 
 
@@ -41,54 +40,33 @@ TerrainMap::TerrainMap(const Surface* terrainFile)
 
 TerrainMap::~TerrainMap()
 {
-	delete terrainMatrix;
+	delete minY;
+}
+
+const Surface * TerrainMap::GetSurface()
+{
+	return terrainSurface;
 }
 
 bool TerrainMap::IsCollision(Vector<int> position)
 {
-	if (position.x < 0 || position.x >= width || position.y < 0 || position.y >= height)
+	if (position.x < 0 || position.x >= size.x || position.y < 0 || position.y >= size.y)
 		return false;
 
-	if (terrainMatrix[position.x] > position.y)
+	if (minY[position.x] > position.y)
 		return false;
 
 	return true;
-
-	//return terrainMatrix[position.y * width + position.x];
 }
 
-//int TerrainMap::GetMinYAtX(int x)
-//{
-//	if (x < 0 || x >= width)
-//		return 0;
-//
-//	for (int y = 0; y < height; y++)
-//		if(terrainMatrix[y * width + x])
-//			return y;
-//}
-
-int TerrainMap::GetYMove(Vector<int> position)
+int TerrainMap::GetY(int xPosition)
 {
-	if (!ValidPosition(position))
-		return position.y;
-
-	return terrainMatrix[position.x] - position.y;
-
-	//if (IsCollision(position))
-	//	for (int y = position.y; y >= 0; y--)
-	//		if (!terrainMatrix[y * width + position.x])
-	//			return y - position.y;
-
-	//for (int y = position.y; y < height; y++)
-	//	if (terrainMatrix[y * width + position.x])
-	//		return y - 1 - position.y;
-
-	//return 0;
+	return minY[xPosition];
 }
 
 bool TerrainMap::ValidPosition(Vector<int> position)
 {
-	if (position.x < 0 || position.x >= width || position.y < 0 || position.y >= height)
+	if (position.x < 0 || position.x >= size.x || position.y < 0 || position.y >= size.y)
 		return false;
 
 	return true;

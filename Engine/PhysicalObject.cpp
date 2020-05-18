@@ -3,9 +3,37 @@
 
 
 PhysicalObject::PhysicalObject(Sprite* sprite, Vector<int> position, Vector<int> size, std::string name)
-		: sprite(sprite), hitBox (position, size.x - 1, size.y - 1), name(name)
+		: sprite(sprite), name(name), size(size), position(position)
 {
-	closeProximityZoneRadius = hitBox.GetMinRadius();
+	BuildCollisionMap();
+}
+
+PhysicalObject::PhysicalObject(Sprite* sprite, Vector<int> position)
+		: sprite(sprite), position(position), size({ sprite->getSurface().GetWidth(), sprite->getSurface().GetHeight() })
+{
+	BuildCollisionMap();
+}
+
+void PhysicalObject::BuildCollisionMap()
+{
+	minY = new int[size.x];
+	maxY = new int[size.x];
+
+	Surface& surface = sprite->getSurface();
+	for (int x = 0; x < surface.GetWidth(); x++)
+	{
+		//Finding minY
+		minY[x] = -1;
+		for (int y = 0; y < surface.GetHeight() && minY[x] == -1; y++)
+			if (surface.GetPixel(x, y) != Colors::Magenta)
+				minY[x] = y;
+
+		//Finding maxY
+		maxY[x] = -1;
+		for (int y = surface.GetHeight() - 1; y >= 0 && maxY[x] == -1; y--)
+			if (surface.GetPixel(x, y) != Colors::Magenta)
+				maxY[x] = y;
+	}
 }
 
 PhysicalObject::~PhysicalObject()
@@ -24,25 +52,44 @@ const std::string PhysicalObject::GetName()
 
 void PhysicalObject::Move(Vector<int> move)
 {
-	hitBox.Move(move);
+	position += move;
 }
 
-Sprite PhysicalObject::GetSprite()
+Sprite* PhysicalObject::GetSprite()
 {
-	return *sprite;
+	return sprite;
 }
 
 RectI PhysicalObject::GetHitBox()
 {
-	return hitBox;
+	return RectI(position, size.x, size.y);
 }
 
-RectI PhysicalObject::GetSpriteBox()
+Vector<int> PhysicalObject::GetTopLeft()
 {
-	return spriteBox;
+	return position;
 }
 
-int PhysicalObject::GetCloseProximityZoneRadius()
+int PhysicalObject::GetMinY(int x)
 {
-	return closeProximityZoneRadius;
+	if (ValidPosition({ x, 0 }))
+		return minY[x];
+
+	return 0;
+}
+
+int PhysicalObject::GetMaxY(int x)
+{
+	if (ValidPosition({ x, 0 }))
+		return maxY[x];
+
+	return 0;
+}
+
+bool PhysicalObject::ValidPosition(Vector<int> position)
+{
+	if (position.x < 0 || position.x >= size.x || position.y < 0 || position.y >= size.y)
+		return false;
+
+	return true;
 }

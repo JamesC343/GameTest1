@@ -11,6 +11,7 @@ class PhysicalObject
 {
     public:
 		PhysicalObject(Sprite*, Vector<int>, Vector<int>, std::string);
+		PhysicalObject(Sprite*, Vector<int>);
         virtual ~PhysicalObject() = 0;
 
 		virtual void Routine();
@@ -18,19 +19,23 @@ class PhysicalObject
 
 		virtual void Move(Vector<int>);
 
-		Sprite GetSprite();
+		Sprite* GetSprite();
 		RectI GetHitBox();
-		RectI GetSpriteBox();
-		int GetCloseProximityZoneRadius();
+		Vector<int> GetTopLeft();
+		int GetMinY(int);
+		int GetMaxY(int);
 
     protected:
 
     private:
-		int closeProximityZoneRadius = 0;
+		void BuildCollisionMap();
+		bool ValidPosition(Vector<int>);
 
 		Sprite * sprite;
-		RectI hitBox = { 0,0,0,0 };
-		RectI spriteBox = { 0,0,0,0 };
+		Vector<int> size;
+		Vector<int> position;
+		int* minY;
+		int* maxY;
 
 		std::string name;
 };

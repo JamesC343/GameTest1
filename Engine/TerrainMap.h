@@ -8,15 +8,13 @@ class TerrainMap
 public:
 	TerrainMap(const Surface*);
 	~TerrainMap();
+	const Surface* GetSurface();
 	bool IsCollision(Vector<int>);
-	//int GetMinYAtX(int);
-	int GetYMove(Vector<int>);
-private:
-	bool ValidPosition(Vector<int>);
-
-	int width;
-	int height;
-	//bool* terrainMatrix;
-	int* terrainMatrix;
+	int GetY(int);
+	bool ValidPosition(Vector<int> = { 0, 0 });
+protected:
+	const Surface* terrainSurface;
+	Vector<int> size;
+	int* minY;
 };
 

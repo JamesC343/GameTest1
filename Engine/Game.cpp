@@ -26,27 +26,26 @@
 #include "Camera.h"
 #include <iostream>
 
-Game::Game( MainWindow& wnd ) :	wnd( wnd )
+Game::Game(MainWindow& wnd) : wnd(wnd)
 {
 	gfx = new Graphics(wnd);
-	
-	Sprite* playerSprite = new Sprite("images/player.bmp", { 0,55,0,60 });
-	player = new Player(playerSprite, { 0 * (10), 0 * (10) }, { 55 * (10), 60 * (10) }, "Player");
+
+	Sprite* playerSprite = new Sprite("images/player.bmp");
+	player = new Player(playerSprite, { 0, 0 }, { 55, 60 }, "Player");
 	entities.push_back(player);
 
-	Sprite* yorpSprite = new Sprite("images/yorp.bmp", { 0,29,0,42 });
+	Sprite* yorpSprite = new Sprite("images/yorp.bmp");
 	//entities.push_back(new EntityY(yorpSprite, { 400 * (10), 200 * (10) }, { 29 * (10), 42 * (10) }, "Yorp"));
 
 	Surface* terrainSurface = new Surface("images/terrain.bmp");
 	terrainMap = new TerrainMap(terrainSurface);
 
-	const Vector<int> worldSize = { 32,24 }; //Legacy?
-	//loadTerrainMapLegacy(worldSize);
-	//loadTerrainMatrix(terrainSurface);
-	loadDerivedSets();
-	
-	camera = new Camera(&wnd, gfx, player, &visualObjects, { 0, worldSize.x * 40, 0, worldSize.y * 32 } );
+	terrainObjects.push_back(new TerrainObject(new Sprite("images/terrainObject.bmp"), { 990, 360 }));
+	terrainObjects.push_back(new TerrainObject(new Sprite("images/terrainObject2.bmp"), { 200, 552 }));
 
+	const Vector<int> worldSize = { 32,24 }; //Legacy?
+	
+	camera = new Camera(&wnd, gfx, terrainMap, &terrainObjects, player, &entities, { 0, worldSize.x * 40, 0, worldSize.y * 32 } );
 	physics = new Physics(player, terrainMap, &terrainObjects, &entities);
 
 	physicsTimer.Mark();
@@ -86,11 +85,11 @@ void Game::UpdateModel(const float deltaTime)
 	}
 	if (wnd.kbd.KeyIsPressed('A'))
 	{
-		player->Run(-25 * (10));
+		player->Run(-25);
 	}
 	if (wnd.kbd.KeyIsPressed('D'))
 	{
-		player->Run(25 * (10));
+		player->Run(25);
 	}
 	if (wnd.kbd.KeyIsPressed('P'))
 	{
@@ -98,14 +97,11 @@ void Game::UpdateModel(const float deltaTime)
 	}
 	if( wnd.kbd.KeyIsPressed( VK_SPACE ) )
 	{
-		player->Jump(-850 * (10));
+		player->Jump(-850);
 	}
 
 	for (int i = 0; i < entities.size(); i++)
 		entities.at(i)->Routine(deltaTime);
-
-	for (int i = 0; i < physicalObjects.size(); i++)
-		physicalObjects.at(i)->Routine();
 
 	physics->Routine(deltaTime);
 	camera->Routine(deltaTime);
@@ -114,93 +110,4 @@ void Game::UpdateModel(const float deltaTime)
 void Game::ComposeFrame(const float deltaTime)
 {
 	camera->DrawSprites(deltaTime);
-}
-
-//void Game::loadTerrainMatrix(const Surface* terrainFile)
-//{
-//	terrainMatrix.resize(terrainFile->GetWidth());
-//
-//	for (int x = 0; x < terrainMatrix.size(); x++)
-//	{
-//		terrainMatrix.at(x).resize(terrainFile->GetHeight());
-//
-//		for (int y = 0; y < terrainMatrix.at(x).size(); y++)
-//			terrainMatrix.at(x).at(y) = (terrainFile->GetPixel(x, y) == Colors::Magenta) ? false : true;
-//	}
-//}
-
-void Game::loadTerrainMapLegacy(const Vector<int> worldSize)
-{
-	std::string map =
-		"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
-		"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
-		"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
-		"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
-		"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
-		"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
-		"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
-		"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
-		"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
-		"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
-		"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
-		"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
-		"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
-		"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
-		"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAB"
-		"BAAAAAAAAABAAAAAAAAAAAAAAAAAAAAB"
-		"BAAAAAAAAAAAAAABBBBBBBBAAAAAAAAB"
-		"BBBAAAAAAAAAABBBBBBBBBBBAAAAABBB"
-		"BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB"
-		"CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC"
-		"CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC"
-		"CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC"
-		"CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC"
-		"CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC";
-
-	Sprite* thisIsAMemoryLeak = new Sprite("images/terrain2.bmp", { 0,40,0,32 });
-
-	auto mapIterator2 = map.cbegin();
-	int name = 0;
-	for (int i = 0; i < worldSize.x*worldSize.y; i++, ++mapIterator2)
-	{
-		if (*mapIterator2 == 'B')
-		{
-			terrainObjects.push_back(new TerrainObject(thisIsAMemoryLeak, Vector<int>{ i%worldSize.x * 40, i / worldSize.x * 32 }, Vector<int>{ 40, 32 }, std::to_string(name)));
-			name++;
-		}
-		/*else if (*mapIterator2 == 'C')
-		{
-			visualObjects.push_back(new TerrainObject(thisIsAMemoryLeak, Vector<int>{ i%worldSize.x * 40 * (20), i / worldSize.x * 32 * (20) }, Vector<int>{ 40 * (20), 32 * (20) }, std::to_string(name)));
-			name++;
-		}*/
-	}
-}
-
-void Game::loadDerivedSets()
-{
-	PhysicalObject* loadObject;
-
-	for (int i = 0; i < entities.size(); i++)
-	{
-		loadObject = entities.at(i);
-
-		if (loadObject != NULL)
-		{
-			physicalObjects.push_back(loadObject);
-			visualObjects.push_back(loadObject);
-		}
-	}
-
-	loadObject = nullptr;
-
-	for (int i = 0; i < terrainObjects.size(); i++)
-	{
-		loadObject = terrainObjects.at(i);
-
-		if (loadObject != NULL)
-		{
-			physicalObjects.push_back(loadObject);
-			visualObjects.push_back(loadObject);
-		}
-	}
 }

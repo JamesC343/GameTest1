@@ -43,9 +43,6 @@ class Game
 	private:
 		void ComposeFrame(const float);
 		void UpdateModel(const float);
-		//void loadTerrainMatrix(const Surface*);
-		void loadTerrainMapLegacy(const Vector<int>);
-		void loadDerivedSets();
 	
 	private:
 		MainWindow& wnd;
@@ -70,6 +67,6 @@ class Game
 		std::vector<TerrainObject*> terrainObjects;
 
 		//Derived Sets
-		std::vector<PhysicalObject*> physicalObjects;//For Physics
-		std::vector<PhysicalObject*> visualObjects;//For Camera
+		//std::vector<PhysicalObject*> physicalObjects;//For Physics
+		//std::vector<PhysicalObject*> visualObjects;//For Camera
 };

@@ -20,6 +20,7 @@ public:
 	RectI GetHitBox();
 	RectI GetHitBox(float);
 	RectI GetHitBox(Vector<int>);
+	int GetWeight();
 
 protected:
 	void ApplyGravityAndFriction(float);
@@ -30,5 +31,6 @@ protected:
 private:
 	Vector<int> forceVector = { 0,0 };
 	Vector<int> velocityVector = { 0,0 };
+	int weight = 1;
 };
 

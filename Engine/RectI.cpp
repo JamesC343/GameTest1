@@ -17,7 +17,7 @@ RectI::RectI( const Vector<int>& topLeft,const Vector<int> & bottomRight )
 
 RectI::RectI( const Vector<int>& topLeft,int width,int height )
 	:
-	RectI( topLeft,topLeft + Vector<int>( width,height ) )
+	RectI( topLeft,topLeft + Vector<int>( width - 1, height - 1 ) )
 {
 }
 

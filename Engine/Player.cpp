@@ -20,7 +20,7 @@ void Player::Routine(float deltaTime)
 
 void Player::Run(int xRun)
 {
-	int runMax = 500 * (10);
+	int runMax = 500;
 	int run = isGrounded ? xRun : xRun / 5;
 
 	AddForce({ (GetForceVector().x + run > runMax) ? runMax - GetForceVector().x
@@ -33,4 +33,14 @@ void Player::Jump(int yJump)
 		AddForce({ 0, yJump });
 
     isGrounded = false;
+}
+
+void Player::AddForce(Vector<int> force)
+{
+	Entity::AddForce(force);
+}
+
+void Player::AddVelocity(Vector<int> velocity)
+{
+	Entity::AddVelocity(velocity);
 }

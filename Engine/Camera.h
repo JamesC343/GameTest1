@@ -6,11 +6,13 @@
 #include "Player.h"
 #include "MainWindow.h"
 #include "Font.h"
+#include "TerrainMap.h"
+#include "TerrainObject.h"
 
 class Camera// : public Entity
 {
     public:
-        Camera(MainWindow*,Graphics*,Player*,std::vector<PhysicalObject*>*,RectI);
+        Camera(MainWindow*,Graphics*,TerrainMap*,std::vector<TerrainObject*>*,Player*,std::vector<Entity*>*,RectI);
         virtual ~Camera();
         void Routine(const float);
         void DrawSprites(const float);
@@ -20,6 +22,7 @@ class Camera// : public Entity
 
     private:
 		void DrawEntities();
+		void DrawTerrain();
 		
         void Move(float);
         void SetPosition(Vector<int> newPosition);
@@ -31,13 +34,14 @@ class Camera// : public Entity
 		int ticksPerSecond = 0;
 		int framesPerSecond = 0;
 
+		const Surface* terrainMapSurface;
 		Player* target;
 
-		std::vector<PhysicalObject*>* visualObjects;
+		std::vector<Entity*>* entities;
+		std::vector<TerrainObject*>* terrainObjects;
 		
 		Font font = "images/Fixedsys16x28.bmp";
 		Surface* FPSBackGround;
-		Surface* testSprite;////////////////
 		Surface* backgroundSprite;
 		Surface* foregroundSprite;
 		Surface* terrainSprite;
